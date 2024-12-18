@@ -9,21 +9,18 @@
 #include <string.h>
 #include <unordered_map>
 
-#include <sys/stat.h>
-
 #ifdef _MSC_VER
-#  define stat64 _stat64
+#  include <sys/types.h> /* required by _stat64 */
+#  define stat _stat64
 #endif
-#if defined __APPLE__
-#  define stat64 stat
-#endif
+#include <sys/stat.h>
 
 #include "json.hpp"
 
 #include "../../server/TracyFileWrite.hpp"
 #include "../../server/TracyMmap.hpp"
 #include "../../server/TracyWorker.hpp"
-#include "../../zstd/zstd.h"
+#include "zstd.h"
 
 using json = nlohmann::json;
 
@@ -71,8 +68,8 @@ int main( int argc, char** argv )
             fprintf( stderr, "Cannot open input file!\n" );
             exit( 1 );
         }
-        struct stat64 sb;
-        if( stat64( input, &sb ) != 0 )
+        struct stat sb;
+        if( stat( input, &sb ) != 0 )
         {
             fprintf( stderr, "Cannot open input file!\n" );
             fclose( f );

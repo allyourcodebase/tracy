@@ -6,7 +6,7 @@
 #if defined TRACY_ENABLE && !defined __EMSCRIPTEN__
 #  include "TracyApi.h"
 #  include "TracyForceInline.hpp"
-#  include "../client/tracy_rpmalloc.hpp"
+#  include "rpmalloc/rpmalloc.h"
 #  define TRACY_USE_RPMALLOC
 #endif
 

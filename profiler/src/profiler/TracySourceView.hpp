@@ -5,13 +5,15 @@
 #include <string>
 #include <vector>
 
-#include "tracy_robin_hood.h"
 #include "TracyCharUtil.hpp"
 #include "TracyDecayValue.hpp"
 #include "TracySourceContents.hpp"
 #include "TracySourceTokenizer.hpp"
 #include "../public/common/TracyForceInline.hpp"
 #include "../public/common/TracyProtocol.hpp"
+
+#include "robin_hood.h"
+using namespace robin_hood;
 
 struct ImFont;
 struct ImVec2;

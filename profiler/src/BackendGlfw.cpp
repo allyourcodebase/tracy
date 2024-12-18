@@ -4,7 +4,8 @@
 #  include <GLES2/gl2.h>
 #  include <emscripten/html5.h>
 #else
-#  include "imgui/imgui_impl_opengl3_loader.h"
+#  define GLAD_GL_IMPLEMENTATION
+#  include "glad/gl.h"
 #endif
 
 #include <chrono>
@@ -93,6 +94,10 @@ Backend::Backend( const char* title, const std::function<void()>& redraw, const 
 #endif
 
     glfwMakeContextCurrent( s_window );
+
+    int glVersion = gladLoadGL(glfwGetProcAddress);
+    if ( !glVersion ) { fprintf( stderr, "Unable to load OpenGL\n" ); exit( 1 ); }
+
     glfwSwapInterval( 1 ); // Enable vsync
     glfwSetWindowRefreshCallback( s_window, []( GLFWwindow* ) { tracy::s_wasActive = true; s_redraw(); } );
 

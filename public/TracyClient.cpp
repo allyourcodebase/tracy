@@ -19,14 +19,12 @@
 #  pragma warning(push, 0)
 #endif
 
-#include "common/tracy_lz4.cpp"
 #include "client/TracyProfiler.cpp"
 #include "client/TracyCallstack.cpp"
 #include "client/TracySysPower.cpp"
 #include "client/TracySysTime.cpp"
 #include "client/TracySysTrace.cpp"
 #include "common/TracySocket.cpp"
-#include "client/tracy_rpmalloc.cpp"
 #include "client/TracyDxt1.cpp"
 #include "client/TracyAlloc.cpp"
 #include "client/TracyOverride.cpp"

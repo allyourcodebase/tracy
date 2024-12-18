@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <stddef.h>
 
-#include "../public/common/tracy_lz4.hpp"
-#include "../zstd/zstd.h"
+#include "lz4/lz4.h"
+#include "zstd.h"
 
 namespace tracy
 {

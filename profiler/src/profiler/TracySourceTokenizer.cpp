@@ -1,6 +1,7 @@
-#include "tracy_robin_hood.h"
 #include "TracyCharUtil.hpp"
 #include "TracySourceTokenizer.hpp"
+#include "robin_hood.h"
+using namespace robin_hood;
 
 namespace tracy
 {

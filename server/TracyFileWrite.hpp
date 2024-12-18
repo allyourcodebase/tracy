@@ -17,10 +17,11 @@
 
 #include "TracyFileHeader.hpp"
 #include "TracyFileMeta.hpp"
-#include "../public/common/tracy_lz4.hpp"
-#include "../public/common/tracy_lz4hc.hpp"
 #include "../public/common/TracyForceInline.hpp"
-#include "../zstd/zstd.h"
+
+#include "lz4/lz4.h"
+#include "lz4/lz4hc.h"
+#include "zstd.h"
 
 namespace tracy
 {

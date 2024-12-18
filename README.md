@@ -1,28 +1,75 @@
+[![CI](https://github.com/allyourcodebase/tracy/actions/workflows/build.yml/badge.svg)](https://github.com/allyourcodebase/tracy/actions)
+
 # Tracy Profiler
 
-[![Sponsor](.github/sponsor.png)](https://github.com/sponsors/wolfpld/)
+This is [Tracy](https://github.com/wolfpld/tracy), packaged for [Zig](https://ziglang.org/).
 
-### A real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.
+## Installation
 
-Tracy supports profiling CPU (Direct support is provided for C, C++, Lua and Python integration. At the same time, third-party bindings to many other languages exist on the internet, such as [Rust](https://github.com/nagisa/rust_tracy_client), [Zig](https://github.com/nektro/zig-tracy), [C#](https://github.com/clibequilibrium/Tracy-CSharp), [OCaml](https://github.com/imandra-ai/ocaml-tracy), [Odin](https://github.com/oskarnp/odin-tracy), etc.), GPU (All major graphic APIs: OpenGL, Vulkan, Direct3D 11/12, OpenCL.), memory allocations, locks, context switches, automatically attribute screenshots to captured frames, and much more.
+Install Zig 0.13.0 and then run the following command:
 
-- [Documentation](https://github.com/wolfpld/tracy/releases/latest/download/tracy.pdf) for usage and build process instructions
-- [Releases](https://github.com/wolfpld/tracy/releases) containing the documentation (`tracy.pdf`) and compiled Windows x64 binaries (`Tracy-<version>.7z`) as assets
-- [Changelog](NEWS)
-- [Interactive demo](https://tracy.nereid.pl/)
+```bash
+zig build install-profiler
+./zig-out/bin/tracy-profiler
+```
 
-![](doc/profiler.png)
+You can also directly run the Tracy Profiler with the "run" step:
 
-![](doc/profiler2.png)
+```bash
+zig build run
+```
 
-![](doc/profiler3.png)
+### System Dependencies
 
-[An Introduction to Tracy Profiler in C++ - Marcos Slomp - CppCon 2023](https://youtu.be/ghXk3Bk5F2U?t=37)
+Most systems will already have the necessary dependencies installed by default.
 
-[Introduction to Tracy Profiler v0.2](https://www.youtube.com/watch?v=fB5B46lbapc)  
-[New features in Tracy Profiler v0.3](https://www.youtube.com/watch?v=3SXpDpDh2Uo)  
-[New features in Tracy Profiler v0.4](https://www.youtube.com/watch?v=eAkgkaO8B9o)  
-[New features in Tracy Profiler v0.5](https://www.youtube.com/watch?v=P6E7qLMmzTQ)  
-[New features in Tracy Profiler v0.6](https://www.youtube.com/watch?v=uJkrFgriuOo)  
-[New features in Tracy Profiler v0.7](https://www.youtube.com/watch?v=_hU7vw00MZ4)  
-[New features in Tracy Profiler v0.8](https://www.youtube.com/watch?v=30wpRpHTTag)
+#### Client
+
+- `ws2_32` (windows)
+- `dbghelp` (windows)
+- `advapi32` (windows)
+- `user32` (windows)
+- `execinfo` (freeBSD)
+
+#### Profiler & Other Tools
+
+- `ws2_32` (windows)
+- `dbghelp` (windows, tracy-update only)
+- `ole32` (windows)
+- `uuid` (windows)
+- `shell32` (windows)
+- `AppKit` (macOS)
+- `UniformTypeIdentifiers` (macOS)
+- `libGL` (linux)
+- `libEGL` (linux, not required when using `-Dlegacy`)
+- `libxkbcommon` (linux, not required when using `-Dlegacy`)
+- `libdbus-1` (linux, can be disabled with `-Dno-fileselector` or `-Dportal=false`)
+- `libgtk+-3.0` (linux, only required when using `-Dportal=false`)
+
+#### System Integrations
+
+Tracy has been ported with support for Zig's [System Integration Options](https://ziglang.org/download/0.12.0/release-notes.html#Ability-to-Declare-Optional-System-Library-Integration).
+
+### Cross Compilation
+
+#### Windows
+
+Cross compiling to windows works out of the box. It can even connect to a client that is running a different host (Linux).
+
+```bash
+zig build -Dtarget=x86_64-windows
+zig build run -Dtarget=x86_64-windows -fwine # run the tracy profiler with Wine
+```
+
+#### MacOS
+
+Cross compiling to macos can successfully produce a binary. Whether it is functional has not been tested.
+
+```bash
+zig build -Dtarget=aarch64-macos -Dno-fileselector
+file zig-out/bin/tracy-profiler
+```
+
+#### Linux
+
+Cross compiling to Linux is currently not possible because of the dependency on `libGL` and `libEGL`.

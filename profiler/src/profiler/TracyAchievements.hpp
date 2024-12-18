@@ -6,9 +6,9 @@
 #include <vector>
 
 #include "imgui.h"
-
 #include "TracyCharUtil.hpp"
-#include "tracy_robin_hood.h"
+#include "robin_hood.h"
+using namespace robin_hood;
 
 namespace tracy
 {
@@ -74,7 +74,7 @@ private:
     void Save();
 
     std::vector<data::AchievementItem*> m_queue;
-    tracy::unordered_flat_map<const char*, AchievementPair, charutil::Hasher, charutil::Comparator> m_map;
+    unordered_flat_map<const char*, AchievementPair, charutil::Hasher, charutil::Comparator> m_map;
 };
 
 }

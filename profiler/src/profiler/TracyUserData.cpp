@@ -7,7 +7,9 @@
 #  include <unistd.h>
 #endif
 
-#include "../ini.h"
+extern "C" {
+#include "ini/ini.h"
+}
 
 #include "TracyStorage.hpp"
 #include "TracyUserData.hpp"

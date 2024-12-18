@@ -2,7 +2,9 @@
 #include <inttypes.h>
 #include <time.h>
 
-#include "../ini.h"
+extern "C" {
+#include "ini/ini.h"
+}
 
 #include "TracyAchievements.hpp"
 #include "TracyStorage.hpp"

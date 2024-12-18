@@ -1,7 +1,7 @@
 #include <numeric>
 #include <sstream>
 
-#include "../dtl/dtl.hpp"
+#include "dtl/dtl.hpp"
 
 #include "TracyImGui.hpp"
 #include "TracyFileRead.hpp"

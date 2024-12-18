@@ -13,22 +13,18 @@
 #include <utility>
 #include <vector>
 
-#include <sys/stat.h>
-
 #ifdef _MSC_VER
-#  define stat64 _stat64
+#  include <sys/types.h> /* required by _stat64 */
+#  define stat _stat64
 #endif
-#if defined __APPLE__ || defined __FreeBSD__
-#  define stat64 stat
-#endif
+#include <sys/stat.h>
 
 #include "TracyFileHeader.hpp"
 #include "TracyFileMeta.hpp"
 #include "TracyMmap.hpp"
 #include "../public/common/TracyYield.hpp"
-#include "../public/common/tracy_lz4.hpp"
 #include "../public/common/TracyForceInline.hpp"
-#include "../zstd/zstd.h"
+#include "zstd.h"
 
 namespace tracy
 {
@@ -459,8 +455,8 @@ private:
             throw NotTracyDump();
         }
 
-        struct stat64 buf;
-        if( stat64( fn, &buf ) == 0 )
+        struct stat buf;
+        if( stat( fn, &buf ) == 0 )
         {
             m_dataSize = buf.st_size;
         }

@@ -1,8 +1,10 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
+#define GLAD_GL_IMPLEMENTATION
+#include "glad/gl.h"
+
 #include "imgui/imgui_impl_opengl3.h"
-#include "imgui/imgui_impl_opengl3_loader.h"
 
 #include <chrono>
 #include <linux/input-event-codes.h>
@@ -810,6 +812,9 @@ Backend::Backend( const char* title, const std::function<void()>& redraw, const 
     res = eglMakeCurrent( s_eglDpy, s_eglSurf, s_eglSurf, s_eglCtx );
     if( res != EGL_TRUE ) { fprintf( stderr, "Cannot make EGL context current!\n" ); exit( 1 ); }
 
+    int glVersion = gladLoaderLoadGL();
+    if ( !glVersion ) { fprintf( stderr, "Unable to load OpenGL\n" ); exit( 1 ); }
+
     ImGui_ImplOpenGL3_Init( "#version 150" );
 
     wl_display_roundtrip( s_dpy );
@@ -869,6 +874,7 @@ Backend::~Backend()
     if( s_xkbKeymap ) xkb_keymap_unref( s_xkbKeymap );
     xkb_context_unref( s_xkbCtx );
     wl_display_disconnect( s_dpy );
+    gladLoaderUnloadGL();
 }
 
 void Backend::Show()

@@ -69,8 +69,6 @@
 #include "../common/TracySocket.hpp"
 #include "../common/TracySystem.hpp"
 #include "../common/TracyYield.hpp"
-#include "../common/tracy_lz4.hpp"
-#include "tracy_rpmalloc.hpp"
 #include "TracyCallstack.hpp"
 #include "TracyDebug.hpp"
 #include "TracyDxt1.hpp"
@@ -80,6 +78,9 @@
 #include "TracyArmCpuTable.hpp"
 #include "TracySysTrace.hpp"
 #include "../tracy/TracyC.h"
+
+#include "lz4/lz4.h"
+#include "rpmalloc/rpmalloc.h"
 
 #ifdef TRACY_PORT
 #  ifndef TRACY_DATA_PORT

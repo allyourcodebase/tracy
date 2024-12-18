@@ -24,9 +24,11 @@
 #include "stb_image.h"
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include "stb_image_resize.h"
+#include "deprecated/stb_image_resize.h"
 
-#include "ini.h"
+extern "C" {
+#include "ini/ini.h"
+}
 
 #include "../../public/common/TracyProtocol.hpp"
 #include "../../public/common/TracyVersion.hpp"
@@ -42,8 +44,6 @@
 #include "profiler/TracyView.hpp"
 #include "profiler/TracyWeb.hpp"
 #include "profiler/IconsFontAwesome6.h"
-#include "../../server/tracy_pdqsort.h"
-#include "../../server/tracy_robin_hood.h"
 #include "../../server/TracyFileHeader.hpp"
 #include "../../server/TracyFileRead.hpp"
 #include "../../server/TracyPrint.hpp"
@@ -82,7 +82,7 @@ struct ClientData
 
 enum class ViewShutdown { False, True, Join };
 
-static tracy::unordered_flat_map<uint64_t, ClientData> clients;
+static unordered_flat_map<uint64_t, ClientData> clients;
 static std::unique_ptr<tracy::View> view;
 static tracy::BadVersionState badVer;
 static uint16_t port = 8086;
@@ -91,7 +91,7 @@ static char title[128];
 static std::thread loadThread, updateThread, updateNotesThread;
 static std::unique_ptr<tracy::UdpListen> broadcastListen;
 static std::mutex resolvLock;
-static tracy::unordered_flat_map<std::string, std::string> resolvMap;
+static unordered_flat_map<std::string, std::string> resolvMap;
 static ResolvService resolv( port );
 static char addr[1024] = { "127.0.0.1" };
 static ConnectionHistory* connHist;

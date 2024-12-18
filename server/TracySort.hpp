@@ -14,6 +14,6 @@
 #  endif
 #endif
 
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 
 #endif

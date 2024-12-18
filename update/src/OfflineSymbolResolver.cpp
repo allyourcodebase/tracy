@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 #include "../../server/TracyWorker.hpp"
-#include "../../zstd/zstd.h"
+#include "zstd.h"
 
 #include "OfflineSymbolResolver.h"
 

@@ -12,8 +12,8 @@
 #include "../../server/TracyFileWrite.hpp"
 #include "../../server/TracyPrint.hpp"
 #include "../../server/TracyWorker.hpp"
-#include "../../zstd/zstd.h"
-#include "../../getopt/getopt.h"
+#include "zstd.h"
+#include "getopt.h"
 
 #include "OfflineSymbolResolver.h"
 
@@ -21,6 +21,9 @@
 #  define ftello64(x) ftello(x)
 #elif defined _WIN32
 #  define ftello64(x) _ftelli64(x)
+#endif
+#ifndef ftello64
+#  define ftello64(x) ftello(x)
 #endif
 
 void Usage()

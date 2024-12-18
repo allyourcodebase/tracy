@@ -3,7 +3,7 @@
 #include <sstream>
 #include <stdio.h>
 
-#include <capstone.h>
+#include <capstone/capstone.h>
 
 #include "imgui.h"
 #include "TracyCharUtil.hpp"

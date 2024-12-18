@@ -24,8 +24,9 @@
 #include "../server/TracyFileWrite.hpp"
 #include "../server/TracyShortPtr.hpp"
 #include "../server/TracyWorker.hpp"
-#include "../server/tracy_robin_hood.h"
 #include "../server/TracyVector.hpp"
+#include "robin_hood.h"
+using namespace robin_hood;
 
 namespace tracy
 {
