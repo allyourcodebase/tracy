@@ -6,7 +6,7 @@
   },
   "1220c15e66c13f9633fcfd50b5ed265f74f2950c98b1f1defd66298fa027765e0190": {
     "name": "glfw",
-    "url": "git+https://github.com/hexops/glfw.git#e6f377baed70a7bef9fa08d808f40b64c5136bf6",
+    "url": "git+https://github.com/allyourcodebase/glfw.git#e6f377baed70a7bef9fa08d808f40b64c5136bf6",
     "hash": "sha256-KvvZm3rHZucGa00XErSA82nwy8LjYsMs1eOmhXj8cIY="
   },
   "12205d131983601cdb3500f38e9d8adaed5574fb0211b8b39291d2e9b90c6555ce59": {
