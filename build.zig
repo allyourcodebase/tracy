@@ -15,6 +15,7 @@ pub fn build(b: *std.Build) !void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
+    const linkage = b.option(std.builtin.LinkMode, "linkage", "Link mode") orelse .static;
     const strip = b.option(bool, "strip", "Omit debug information");
     const pie = b.option(bool, "pie", "Produce a Position Independent Executable");
 
@@ -53,43 +54,40 @@ pub fn build(b: *std.Build) !void {
     const link_system_lz4 = b.systemIntegrationOption("lz4", .{});
     const link_system_freetype = b.systemIntegrationOption("freetype", .{});
 
-    const static_library_options: std.Build.StaticLibraryOptions = .{
-        .name = "",
+    const common_module_options: std.Build.Module.CreateOptions = .{
         .target = target,
         .optimize = optimize,
         .pic = pie,
         .strip = strip,
     };
 
-    const rpmalloc = createRpcmalloc(b, static_library_options);
+    const rpmalloc = createRpcmalloc(b, common_module_options);
     const lz4 = if (link_system_lz4) null else if (b.lazyDependency("lz4", .{
         .target = target,
         .optimize = optimize,
     })) |dependency| dependency.artifact("lz4") else null;
 
-    const tracy_client = b.addStaticLibrary(.{
+    const tracy_client = b.addLibrary(.{
+        .linkage = linkage,
         .name = "tracy",
-        .target = target,
-        .optimize = optimize,
-        .pic = pie,
-        .strip = strip,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+            .pic = pie,
+            .strip = strip,
+            .link_libc = true,
+            .link_libcpp = true,
+        }),
     });
-    tracy_client.root_module.sanitize_c = false;
-    tracy_client.linkLibC();
-    tracy_client.linkLibCpp();
-    if (link_system_lz4) tracy_client.linkSystemLibrary("lz4") else if (lz4) |compile| tracy_client.linkLibrary(compile);
-    tracy_client.linkLibrary(rpmalloc);
+    if (link_system_lz4) tracy_client.root_module.linkSystemLibrary("lz4", .{}) else if (lz4) |compile| tracy_client.root_module.linkLibrary(compile);
+    tracy_client.root_module.linkLibrary(rpmalloc);
     tracy_client.installHeadersDirectory(b.path("public/client"), "client", .{ .include_extensions = &.{ ".h", ".hpp" } });
     tracy_client.installHeadersDirectory(b.path("public/common"), "common", .{ .include_extensions = &.{ ".h", ".hpp" } });
     tracy_client.installHeadersDirectory(b.path("public/tracy"), "tracy", .{ .include_extensions = &.{ ".h", ".hpp" } });
-    tracy_client.addCSourceFile(.{
+    tracy_client.root_module.addCSourceFile(.{
         .file = b.path("public/TracyClient.cpp"),
-        .flags = &.{"-std=c++11"},
+        .flags = &.{ "-std=c++11", "-fno-sanitize=undefined" },
     });
-    if (target.result.isMinGW()) {
-        tracy_client.root_module.addCMacro("WINVER", "0x0601");
-        tracy_client.root_module.addCMacro("_WIN32_WINNT", "0x0601");
-    }
     if (target.result.os.tag == .windows) {
         tracy_client.root_module.linkSystemLibrary("ws2_32", .{});
         tracy_client.root_module.linkSystemLibrary("dbghelp", .{});
@@ -141,8 +139,8 @@ pub fn build(b: *std.Build) !void {
 
     const use_wayland = target.result.os.tag == .linux and !legacy;
 
-    const ini = createIni(b, static_library_options);
-    const imgui = createImgui(b, static_library_options, legacy, link_system_glfw, link_system_freetype);
+    const ini = createIni(b, common_module_options);
+    const imgui = createImgui(b, common_module_options, legacy, link_system_glfw, link_system_freetype);
     const zstd = if (link_system_zstd) null else if (b.lazyDependency("zstd", .{
         .target = target,
         .optimize = optimize,
@@ -151,36 +149,37 @@ pub fn build(b: *std.Build) !void {
         .target = target,
         .optimize = optimize,
     })) |dependency| dependency.artifact("capstone") else null;
-    const nfd = b.dependency("nativefiledialog-extended", .{
+    const nfd = b.dependency("nativefiledialog_extended", .{
         .target = target,
         .optimize = optimize,
         .portal = portal,
     }).artifact("nfd");
 
-    const tracy_server = b.addStaticLibrary(.{
+    const tracy_server = b.addLibrary(.{
+        .linkage = linkage,
         .name = "tracy-server",
-        .target = target,
-        .optimize = optimize,
-        .pic = pie,
-        .strip = strip,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+            .pic = pie,
+            .strip = strip,
+            .link_libc = true,
+            .link_libcpp = true,
+        }),
     });
-    tracy_server.root_module.sanitize_c = false;
-    tracy_server.root_module.sanitize_thread = false;
-    tracy_server.linkLibC();
-    tracy_server.linkLibCpp();
-    tracy_server.linkLibrary(rpmalloc);
-    if (link_system_zstd) tracy_server.linkSystemLibrary("zstd") else if (zstd) |compile| tracy_server.linkLibrary(compile);
-    if (link_system_lz4) tracy_server.linkSystemLibrary("lz4") else if (lz4) |compile| tracy_server.linkLibrary(compile);
-    if (link_system_capstone) tracy_server.linkSystemLibrary("capstone") else if (capstone) |compile| tracy_server.linkLibrary(compile);
-    if (target.result.os.tag == .windows) tracy_server.linkSystemLibrary("ws2_32");
+    tracy_server.root_module.linkLibrary(rpmalloc);
+    if (link_system_zstd) tracy_server.root_module.linkSystemLibrary("zstd", .{}) else if (zstd) |compile| tracy_server.root_module.linkLibrary(compile);
+    if (link_system_lz4) tracy_server.root_module.linkSystemLibrary("lz4", .{}) else if (lz4) |compile| tracy_server.root_module.linkLibrary(compile);
+    if (link_system_capstone) tracy_server.root_module.linkSystemLibrary("capstone", .{}) else if (capstone) |compile| tracy_server.root_module.linkLibrary(compile);
+    if (target.result.os.tag == .windows) tracy_server.root_module.linkSystemLibrary("ws2_32", .{});
     if (no_parallel_stl) tracy_server.root_module.addCMacro("NO_PARALLEL_SORT", "1");
     if (no_statistics) tracy_server.root_module.addCMacro("TRACY_NO_STATISTICS", "1");
-    tracy_server.addIncludePath(b.dependency("pdqsort", .{}).path(""));
-    tracy_server.addIncludePath(b.dependency("robin-hood-hashing", .{}).path("src/include"));
-    tracy_server.addIncludePath(b.dependency("xxHash", .{}).path(""));
-    tracy_server.addCSourceFiles(.{
+    tracy_server.root_module.addIncludePath(b.dependency("pdqsort", .{}).path(""));
+    tracy_server.root_module.addIncludePath(b.dependency("robin_hood_hashing", .{}).path("src/include"));
+    tracy_server.root_module.addIncludePath(b.dependency("xxHash", .{}).path(""));
+    tracy_server.root_module.addCSourceFiles(.{
         .root = b.path("server"),
-        .flags = &.{"-std=c++17"},
+        .flags = &.{ "-std=c++17", "-fno-sanitize=undefined" },
         .files = &.{
             "TracyMemory.cpp",
             "TracyMmap.cpp",
@@ -192,9 +191,9 @@ pub fn build(b: *std.Build) !void {
             "TracyWorker.cpp",
         },
     });
-    tracy_server.addCSourceFiles(.{
+    tracy_server.root_module.addCSourceFiles(.{
         .root = b.path("public/common"),
-        .flags = &.{"-std=c++17"},
+        .flags = &.{ "-std=c++17", "-fno-sanitize=undefined" },
         .files = &.{
             "TracySocket.cpp",
             "TracyStackFrames.cpp",
@@ -204,37 +203,39 @@ pub fn build(b: *std.Build) !void {
 
     const tracy_profiler = b.addExecutable(.{
         .name = "tracy-profiler",
-        .target = target,
-        .optimize = optimize,
-        .pic = pie,
-        .strip = strip,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+            .pic = pie,
+            .strip = strip,
+            .link_libc = true,
+            .link_libcpp = true,
+        }),
     });
-    tracy_profiler.root_module.sanitize_c = false;
-    tracy_profiler.root_module.sanitize_thread = false;
-    tracy_profiler.linkLibC();
-    tracy_profiler.linkLibCpp();
-    tracy_profiler.linkLibrary(ini);
-    tracy_profiler.linkLibrary(imgui);
-    tracy_profiler.linkLibrary(tracy_server);
-    if (link_system_zstd) tracy_profiler.linkSystemLibrary("zstd") else if (zstd) |compile| tracy_profiler.linkLibrary(compile);
-    if (link_system_lz4) tracy_profiler.linkSystemLibrary("lz4") else if (lz4) |compile| tracy_profiler.linkLibrary(compile);
-    if (link_system_capstone) tracy_profiler.linkSystemLibrary("capstone") else if (capstone) |compile| tracy_profiler.linkLibrary(compile);
+    tracy_profiler.root_module.linkLibrary(ini);
+    tracy_profiler.root_module.linkLibrary(imgui);
+    tracy_profiler.root_module.linkLibrary(tracy_server);
+    if (link_system_zstd) tracy_profiler.root_module.linkSystemLibrary("zstd", .{}) else if (zstd) |compile| tracy_profiler.root_module.linkLibrary(compile);
+    if (link_system_lz4) tracy_profiler.root_module.linkSystemLibrary("lz4", .{}) else if (lz4) |compile| tracy_profiler.root_module.linkLibrary(compile);
+    if (link_system_capstone) tracy_profiler.root_module.linkSystemLibrary("capstone", .{}) else if (capstone) |compile| tracy_profiler.root_module.linkLibrary(compile);
     if (no_parallel_stl) tracy_profiler.root_module.addCMacro("NO_PARALLEL_SORT", "1");
     if (no_fileselector) {
         tracy_profiler.root_module.addCMacro("TRACY_NO_FILESELECTOR", "1");
     } else {
-        tracy_profiler.linkLibrary(nfd);
+        tracy_profiler.root_module.linkLibrary(nfd);
     }
-    tracy_profiler.addIncludePath(b.path("server"));
-    tracy_profiler.addIncludePath(b.path("include"));
-    tracy_profiler.addIncludePath(b.dependency("dtl", .{}).path(""));
-    tracy_profiler.addIncludePath(b.dependency("stb", .{}).path(""));
-    tracy_profiler.addIncludePath(b.dependency("pdqsort", .{}).path(""));
-    tracy_profiler.addIncludePath(b.dependency("robin-hood-hashing", .{}).path("src/include"));
-    tracy_profiler.addIncludePath(b.dependency("xxHash", .{}).path(""));
-    tracy_profiler.addCSourceFiles(.{
+    tracy_profiler.root_module.addCMacro("__DATE__", "\"??? ?? ????\"");
+    tracy_profiler.root_module.addCMacro("__TIME__", "\"??:??:??\"");
+    tracy_profiler.root_module.addIncludePath(b.path("server"));
+    tracy_profiler.root_module.addIncludePath(b.path("include"));
+    tracy_profiler.root_module.addIncludePath(b.dependency("dtl", .{}).path(""));
+    tracy_profiler.root_module.addIncludePath(b.dependency("stb", .{}).path(""));
+    tracy_profiler.root_module.addIncludePath(b.dependency("pdqsort", .{}).path(""));
+    tracy_profiler.root_module.addIncludePath(b.dependency("robin_hood_hashing", .{}).path("src/include"));
+    tracy_profiler.root_module.addIncludePath(b.dependency("xxHash", .{}).path(""));
+    tracy_profiler.root_module.addCSourceFiles(.{
         .root = b.path("profiler/src/profiler"),
-        .flags = &.{"-std=c++20"},
+        .flags = &.{ "-std=c++20", "-fno-sanitize=undefined" },
         .files = &.{
             "TracyAchievementData.cpp",
             "TracyAchievements.cpp",
@@ -291,9 +292,9 @@ pub fn build(b: *std.Build) !void {
             "TracyWeb.cpp",
         },
     });
-    tracy_profiler.addCSourceFiles(.{
+    tracy_profiler.root_module.addCSourceFiles(.{
         .root = b.path("profiler/src"),
-        .flags = &.{"-std=c++20"},
+        .flags = &.{ "-std=c++20", "-fno-sanitize=undefined" },
         .files = &.{
             "ConnectionHistory.cpp",
             "Filters.cpp",
@@ -310,15 +311,13 @@ pub fn build(b: *std.Build) !void {
             if (use_wayland) "BackendWayland.cpp" else "BackendGlfw.cpp",
         },
     });
-    tracy_profiler.addWin32ResourceFile(.{ .file = b.path("profiler/win32/Tracy.rc") });
+    tracy_profiler.root_module.addWin32ResourceFile(.{ .file = b.path("profiler/win32/Tracy.rc") });
 
     if (use_wayland) {
-        tracy_profiler.linkSystemLibrary("egl");
-
         const link_system_libxkbcommon = b.systemIntegrationOption("libxkbcommon", .{});
 
         if (link_system_libxkbcommon) {
-            tracy_profiler.linkSystemLibrary("xkbcommon");
+            tracy_profiler.root_module.linkSystemLibrary("xkbcommon", .{});
         } else if (b.lazyDependency("libxkbcommon", .{
             .target = target,
             .optimize = optimize,
@@ -326,7 +325,7 @@ pub fn build(b: *std.Build) !void {
             // .@"x-locale-root" = @as([]const u8, ""),
             // .@"xkb-config-root" = @as([]const u8, "/usr/share/X11/xkb"),
         })) |wayland| {
-            tracy_profiler.linkLibrary(wayland.artifact("xkbcommon"));
+            tracy_profiler.root_module.linkLibrary(wayland.artifact("xkbcommon"));
         }
 
         for ([_][]const u8{
@@ -335,12 +334,12 @@ pub fn build(b: *std.Build) !void {
             "wayland-egl",
         }) |name| {
             if (b.systemIntegrationOption(name, .{})) {
-                tracy_profiler.linkSystemLibrary(name);
+                tracy_profiler.root_module.linkSystemLibrary(name, .{});
             } else if (b.lazyDependency("wayland", .{
                 .target = target,
                 .optimize = optimize,
             })) |wayland| {
-                tracy_profiler.linkLibrary(wayland.artifact(name));
+                tracy_profiler.root_module.linkLibrary(wayland.artifact(name));
             }
         }
 
@@ -353,7 +352,7 @@ pub fn build(b: *std.Build) !void {
         else
             null;
 
-        if (b.lazyDependency("wayland-protocols", .{})) |wayland_protocols| {
+        if (b.lazyDependency("wayland_protocols", .{})) |wayland_protocols| {
             for (
                 [_][]const u8{
                     "staging/xdg-activation/xdg-activation-v1.xml",
@@ -374,8 +373,8 @@ pub fn build(b: *std.Build) !void {
                     "wayland-tablet",
                 },
             ) |input_file, output_filename| {
-                const run_wayland_scanner1 = std.Build.Step.Run.create(b, "run wayland-scanner");
-                const run_wayland_scanner2 = std.Build.Step.Run.create(b, "run wayland-scanner");
+                const run_wayland_scanner1: *std.Build.Step.Run = .create(b, "run wayland-scanner");
+                const run_wayland_scanner2: *std.Build.Step.Run = .create(b, "run wayland-scanner");
                 if (use_system_wayland_scanner) {
                     run_wayland_scanner1.addArg("wayland-scanner");
                     run_wayland_scanner2.addArg("wayland-scanner");
@@ -388,20 +387,20 @@ pub fn build(b: *std.Build) !void {
                     run_wayland_scanner1.addArg("client-header");
                     run_wayland_scanner1.addFileArg(wayland_protocols.path(input_file));
                     const header_file = run_wayland_scanner1.addOutputFileArg(b.fmt("{s}-client-protocol.h", .{output_filename}));
-                    tracy_profiler.addIncludePath(header_file.dirname());
+                    tracy_profiler.root_module.addIncludePath(header_file.dirname());
                 }
 
                 {
                     run_wayland_scanner2.addArg("public-code");
                     run_wayland_scanner2.addFileArg(wayland_protocols.path(input_file));
                     const source_file = run_wayland_scanner2.addOutputFileArg(b.fmt("{s}.c", .{output_filename}));
-                    tracy_profiler.addCSourceFile(.{ .file = source_file });
+                    tracy_profiler.root_module.addCSourceFile(.{ .file = source_file });
                 }
             }
         }
     } else {
         if (link_system_glfw) {
-            tracy_profiler.linkSystemLibrary("glfw");
+            tracy_profiler.root_module.linkSystemLibrary("glfw3", .{});
         } else {
             if (b.lazyDependency("glfw", .{
                 .target = target,
@@ -409,10 +408,7 @@ pub fn build(b: *std.Build) !void {
                 .x11 = legacy,
                 .wayland = true,
             })) |glfw_dependency| {
-                tracy_profiler.linkLibrary(glfw_dependency.artifact("glfw"));
-            }
-            if (b.lazyImport(@This(), "glfw")) |glfw| {
-                glfw.addPaths(&tracy_profiler.root_module);
+                tracy_profiler.root_module.linkLibrary(glfw_dependency.artifact("glfw"));
             }
         }
     }
@@ -479,29 +475,31 @@ pub fn build(b: *std.Build) !void {
     {
         const capture_exe = b.addExecutable(.{
             .name = "tracy-capture",
-            .target = target,
-            .optimize = optimize,
-            .pic = pie,
-            .strip = strip,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+                .pic = pie,
+                .strip = strip,
+                .link_libc = true,
+                .link_libcpp = true,
+            }),
         });
-        capture_exe.linkLibC();
-        capture_exe.linkLibCpp();
-        if (link_system_zstd) capture_exe.linkSystemLibrary("zstd") else if (zstd) |compile| capture_exe.linkLibrary(compile); // dependency of tracy-server
-        if (link_system_lz4) capture_exe.linkSystemLibrary("lz4") else if (lz4) |compile| capture_exe.linkLibrary(compile); // dependency of tracy-server
-        capture_exe.linkLibrary(tracy_server);
+        if (link_system_zstd) capture_exe.root_module.linkSystemLibrary("zstd", .{}) else if (zstd) |compile| capture_exe.root_module.linkLibrary(compile); // dependency of tracy-server
+        if (link_system_lz4) capture_exe.root_module.linkSystemLibrary("lz4", .{}) else if (lz4) |compile| capture_exe.root_module.linkLibrary(compile); // dependency of tracy-server
+        capture_exe.root_module.linkLibrary(tracy_server);
         if (no_statistics) capture_exe.root_module.addCMacro("NO_STATISTICS", "1");
         if (no_parallel_stl) capture_exe.root_module.addCMacro("NO_PARALLEL_SORT", "1");
-        capture_exe.addCSourceFile(.{
+        capture_exe.root_module.addCSourceFile(.{
             .file = b.path("capture/src/capture.cpp"),
             .flags = &.{"-std=c++20"},
         });
         if (target.result.os.tag == .windows) {
             const getopt_port = b.dependency("getopt_port", .{});
-            capture_exe.addIncludePath(getopt_port.path(""));
+            capture_exe.root_module.addIncludePath(getopt_port.path(""));
         }
-        capture_exe.addIncludePath(b.dependency("pdqsort", .{}).path("")); // dependency of tracy-server
-        capture_exe.addIncludePath(b.dependency("robin-hood-hashing", .{}).path("src/include")); // dependency of tracy-server
-        capture_exe.addIncludePath(b.dependency("xxHash", .{}).path("")); // dependency of tracy-server
+        capture_exe.root_module.addIncludePath(b.dependency("pdqsort", .{}).path("")); // dependency of tracy-server
+        capture_exe.root_module.addIncludePath(b.dependency("robin_hood_hashing", .{}).path("src/include")); // dependency of tracy-server
+        capture_exe.root_module.addIncludePath(b.dependency("xxHash", .{}).path("")); // dependency of tracy-server
 
         if (no_statistics) {
             capture_exe.root_module.addCMacro("TRACY_NO_STATISTICS", "1");
@@ -524,26 +522,28 @@ pub fn build(b: *std.Build) !void {
     {
         const csvexport_exe = b.addExecutable(.{
             .name = "tracy-csvexport",
-            .target = target,
-            .optimize = optimize,
-            .pic = pie,
-            .strip = strip,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+                .pic = pie,
+                .strip = strip,
+                .link_libc = true,
+                .link_libcpp = true,
+            }),
         });
-        csvexport_exe.linkLibC();
-        csvexport_exe.linkLibCpp();
-        if (link_system_zstd) csvexport_exe.linkSystemLibrary("zstd") else if (zstd) |compile| csvexport_exe.linkLibrary(compile); // dependency of tracy-server
-        if (link_system_lz4) csvexport_exe.linkSystemLibrary("lz4") else if (lz4) |compile| csvexport_exe.linkLibrary(compile); // dependency of tracy-server
-        csvexport_exe.linkLibrary(tracy_server);
+        if (link_system_zstd) csvexport_exe.root_module.linkSystemLibrary("zstd", .{}) else if (zstd) |compile| csvexport_exe.root_module.linkLibrary(compile); // dependency of tracy-server
+        if (link_system_lz4) csvexport_exe.root_module.linkSystemLibrary("lz4", .{}) else if (lz4) |compile| csvexport_exe.root_module.linkLibrary(compile); // dependency of tracy-server
+        csvexport_exe.root_module.linkLibrary(tracy_server);
         csvexport_exe.root_module.addCMacro("NO_STATISTICS", "1");
         if (no_parallel_stl) csvexport_exe.root_module.addCMacro("NO_PARALLEL_SORT", "1");
-        csvexport_exe.addCSourceFile(.{
+        csvexport_exe.root_module.addCSourceFile(.{
             .file = b.path("csvexport/src/csvexport.cpp"),
             .flags = &.{"-std=c++20"},
         });
-        csvexport_exe.addIncludePath(b.dependency("getopt_port", .{}).path(""));
-        csvexport_exe.addIncludePath(b.dependency("pdqsort", .{}).path("")); // dependency of tracy-server
-        csvexport_exe.addIncludePath(b.dependency("robin-hood-hashing", .{}).path("src/include")); // dependency of tracy-server
-        csvexport_exe.addIncludePath(b.dependency("xxHash", .{}).path("")); // dependency of tracy-server
+        csvexport_exe.root_module.addIncludePath(b.dependency("getopt_port", .{}).path(""));
+        csvexport_exe.root_module.addIncludePath(b.dependency("pdqsort", .{}).path("")); // dependency of tracy-server
+        csvexport_exe.root_module.addIncludePath(b.dependency("robin_hood_hashing", .{}).path("src/include")); // dependency of tracy-server
+        csvexport_exe.root_module.addIncludePath(b.dependency("xxHash", .{}).path("")); // dependency of tracy-server
 
         const install_csvexport_exe = b.addInstallArtifact(csvexport_exe, .{});
         b.getInstallStep().dependOn(&install_csvexport_exe.step);
@@ -562,26 +562,28 @@ pub fn build(b: *std.Build) !void {
     {
         const import_chrome_exe = b.addExecutable(.{
             .name = "tracy-import-chrome",
-            .target = target,
-            .optimize = optimize,
-            .pic = pie,
-            .strip = strip,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+                .pic = pie,
+                .strip = strip,
+                .link_libc = true,
+                .link_libcpp = true,
+            }),
         });
-        import_chrome_exe.linkLibC();
-        import_chrome_exe.linkLibCpp();
-        if (link_system_zstd) import_chrome_exe.linkSystemLibrary("zstd") else if (zstd) |compile| import_chrome_exe.linkLibrary(compile); // dependency of tracy-server
-        if (link_system_lz4) import_chrome_exe.linkSystemLibrary("lz4") else if (lz4) |compile| import_chrome_exe.linkLibrary(compile); // dependency of tracy-server
-        import_chrome_exe.linkLibrary(tracy_server);
+        if (link_system_zstd) import_chrome_exe.root_module.linkSystemLibrary("zstd", .{}) else if (zstd) |compile| import_chrome_exe.root_module.linkLibrary(compile); // dependency of tracy-server
+        if (link_system_lz4) import_chrome_exe.root_module.linkSystemLibrary("lz4", .{}) else if (lz4) |compile| import_chrome_exe.root_module.linkLibrary(compile); // dependency of tracy-server
+        import_chrome_exe.root_module.linkLibrary(tracy_server);
         if (no_statistics) import_chrome_exe.root_module.addCMacro("NO_STATISTICS", "1");
         if (no_parallel_stl) import_chrome_exe.root_module.addCMacro("NO_PARALLEL_SORT", "1");
-        import_chrome_exe.addCSourceFile(.{
+        import_chrome_exe.root_module.addCSourceFile(.{
             .file = b.path("import/src/import-chrome.cpp"),
             .flags = &.{"-std=c++20"},
         });
-        import_chrome_exe.addIncludePath(b.dependency("nlohmann-json", .{}).path("single_include/nlohmann"));
-        import_chrome_exe.addIncludePath(b.dependency("pdqsort", .{}).path("")); // dependency of tracy-server
-        import_chrome_exe.addIncludePath(b.dependency("robin-hood-hashing", .{}).path("src/include")); // dependency of tracy-server
-        import_chrome_exe.addIncludePath(b.dependency("xxHash", .{}).path("")); // dependency of tracy-server
+        import_chrome_exe.root_module.addIncludePath(b.dependency("nlohmann_json", .{}).path("single_include/nlohmann"));
+        import_chrome_exe.root_module.addIncludePath(b.dependency("pdqsort", .{}).path("")); // dependency of tracy-server
+        import_chrome_exe.root_module.addIncludePath(b.dependency("robin_hood_hashing", .{}).path("src/include")); // dependency of tracy-server
+        import_chrome_exe.root_module.addIncludePath(b.dependency("xxHash", .{}).path("")); // dependency of tracy-server
 
         const install_import_chrome_exe = b.addInstallArtifact(import_chrome_exe, .{});
         b.getInstallStep().dependOn(&install_import_chrome_exe.step);
@@ -600,25 +602,27 @@ pub fn build(b: *std.Build) !void {
     {
         const import_fuchsia_exe = b.addExecutable(.{
             .name = "tracy-import-fuchsia",
-            .target = target,
-            .optimize = optimize,
-            .pic = pie,
-            .strip = strip,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+                .pic = pie,
+                .strip = strip,
+                .link_libc = true,
+                .link_libcpp = true,
+            }),
         });
-        import_fuchsia_exe.linkLibC();
-        import_fuchsia_exe.linkLibCpp();
-        import_fuchsia_exe.linkLibrary(tracy_server);
-        if (link_system_zstd) import_fuchsia_exe.linkSystemLibrary("zstd") else if (zstd) |compile| import_fuchsia_exe.linkLibrary(compile); // dependency of tracy-server
-        if (link_system_lz4) import_fuchsia_exe.linkSystemLibrary("lz4") else if (lz4) |compile| import_fuchsia_exe.linkLibrary(compile); // dependency of tracy-server
+        import_fuchsia_exe.root_module.linkLibrary(tracy_server);
+        if (link_system_zstd) import_fuchsia_exe.root_module.linkSystemLibrary("zstd", .{}) else if (zstd) |compile| import_fuchsia_exe.root_module.linkLibrary(compile); // dependency of tracy-server
+        if (link_system_lz4) import_fuchsia_exe.root_module.linkSystemLibrary("lz4", .{}) else if (lz4) |compile| import_fuchsia_exe.root_module.linkLibrary(compile); // dependency of tracy-server
         if (no_statistics) import_fuchsia_exe.root_module.addCMacro("NO_STATISTICS", "1");
         if (no_parallel_stl) import_fuchsia_exe.root_module.addCMacro("NO_PARALLEL_SORT", "1");
-        import_fuchsia_exe.addCSourceFile(.{
+        import_fuchsia_exe.root_module.addCSourceFile(.{
             .file = b.path("import/src/import-fuchsia.cpp"),
             .flags = &.{"-std=c++20"},
         });
-        import_fuchsia_exe.addIncludePath(b.dependency("pdqsort", .{}).path("")); // dependency of tracy-server
-        import_fuchsia_exe.addIncludePath(b.dependency("robin-hood-hashing", .{}).path("src/include")); // dependency of tracy-server
-        import_fuchsia_exe.addIncludePath(b.dependency("xxHash", .{}).path("")); // dependency of tracy-server
+        import_fuchsia_exe.root_module.addIncludePath(b.dependency("pdqsort", .{}).path("")); // dependency of tracy-server
+        import_fuchsia_exe.root_module.addIncludePath(b.dependency("robin_hood_hashing", .{}).path("src/include")); // dependency of tracy-server
+        import_fuchsia_exe.root_module.addIncludePath(b.dependency("xxHash", .{}).path("")); // dependency of tracy-server
 
         const install_import_fuchsia_exe = b.addInstallArtifact(import_fuchsia_exe, .{});
         b.getInstallStep().dependOn(&install_import_fuchsia_exe.step);
@@ -637,19 +641,21 @@ pub fn build(b: *std.Build) !void {
     {
         const test_exe = b.addExecutable(.{
             .name = "tracy-test",
-            .target = target,
-            .optimize = optimize,
-            .pic = pie,
-            .strip = strip,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+                .pic = pie,
+                .strip = strip,
+                .link_libc = true,
+                .link_libcpp = true,
+            }),
         });
-        test_exe.linkLibC();
-        test_exe.linkLibCpp();
-        test_exe.linkLibrary(tracy_client);
-        test_exe.addCSourceFile(.{
+        test_exe.root_module.linkLibrary(tracy_client);
+        test_exe.root_module.addCSourceFile(.{
             .file = b.path("test/test.cpp"),
             .flags = &.{"-std=c++11"},
         });
-        test_exe.addIncludePath(b.dependency("stb", .{}).path(""));
+        test_exe.root_module.addIncludePath(b.dependency("stb", .{}).path(""));
 
         const run_test = b.addRunArtifact(test_exe);
         run_test.setCwd(b.path("test"));
@@ -665,21 +671,23 @@ pub fn build(b: *std.Build) !void {
     {
         const update_exe = b.addExecutable(.{
             .name = "tracy-update",
-            .target = target,
-            .optimize = optimize,
-            .pic = pie,
-            .strip = strip,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+                .pic = pie,
+                .strip = strip,
+                .link_libc = true,
+                .link_libcpp = true,
+            }),
         });
-        update_exe.linkLibC();
-        update_exe.linkLibCpp();
-        update_exe.linkLibrary(tracy_server);
-        if (link_system_zstd) update_exe.linkSystemLibrary("zstd") else if (zstd) |compile| update_exe.linkLibrary(compile); // dependency of tracy-server
-        if (link_system_lz4) update_exe.linkSystemLibrary("lz4") else if (lz4) |compile| update_exe.linkLibrary(compile); // dependency of tracy-server
+        update_exe.root_module.linkLibrary(tracy_server);
+        if (link_system_zstd) update_exe.root_module.linkSystemLibrary("zstd", .{}) else if (zstd) |compile| update_exe.root_module.linkLibrary(compile); // dependency of tracy-server
+        if (link_system_lz4) update_exe.root_module.linkSystemLibrary("lz4", .{}) else if (lz4) |compile| update_exe.root_module.linkLibrary(compile); // dependency of tracy-server
         if (target.result.os.tag == .windows) update_exe.root_module.linkSystemLibrary("dbghelp", .{});
         if (no_statistics) update_exe.root_module.addCMacro("NO_STATISTICS", "1");
         if (no_parallel_stl) update_exe.root_module.addCMacro("NO_PARALLEL_SORT", "1");
-        update_exe.addIncludePath(b.path(""));
-        update_exe.addCSourceFiles(.{
+        update_exe.root_module.addIncludePath(b.path(""));
+        update_exe.root_module.addCSourceFiles(.{
             .root = b.path("update/src"),
             .files = &.{
                 "OfflineSymbolResolver.cpp",
@@ -689,10 +697,10 @@ pub fn build(b: *std.Build) !void {
             },
             .flags = &.{"-std=c++20"},
         });
-        update_exe.addIncludePath(b.dependency("getopt_port", .{}).path(""));
-        update_exe.addIncludePath(b.dependency("pdqsort", .{}).path("")); // dependency of tracy-server
-        update_exe.addIncludePath(b.dependency("robin-hood-hashing", .{}).path("src/include")); // dependency of tracy-server
-        update_exe.addIncludePath(b.dependency("xxHash", .{}).path("")); // dependency of tracy-server
+        update_exe.root_module.addIncludePath(b.dependency("getopt_port", .{}).path(""));
+        update_exe.root_module.addIncludePath(b.dependency("pdqsort", .{}).path("")); // dependency of tracy-server
+        update_exe.root_module.addIncludePath(b.dependency("robin_hood_hashing", .{}).path("src/include")); // dependency of tracy-server
+        update_exe.root_module.addIncludePath(b.dependency("xxHash", .{}).path("")); // dependency of tracy-server
 
         const install_update_exe = b.addInstallArtifact(update_exe, .{});
         b.getInstallStep().dependOn(&install_update_exe.step);
@@ -709,64 +717,73 @@ pub fn build(b: *std.Build) !void {
     }
 }
 
-fn createIni(b: *std.Build, options: std.Build.StaticLibraryOptions) *std.Build.Step.Compile {
-    const ini = b.addStaticLibrary(.{
+fn createIni(b: *std.Build, options: std.Build.Module.CreateOptions) *std.Build.Step.Compile {
+    const ini = b.addLibrary(.{
+        .linkage = .static,
         .name = "ini",
-        .target = options.target,
-        .optimize = options.optimize,
-        .pic = options.pic,
-        .strip = options.strip,
-        .link_libc = true,
+        .root_module = b.createModule(.{
+            .target = options.target.?,
+            .optimize = options.optimize.?,
+            .pic = options.pic,
+            .strip = options.strip,
+            .link_libc = true,
+        }),
     });
-    ini.addIncludePath(b.dependency("ini", .{}).path("src"));
     ini.installHeader(b.dependency("ini", .{}).path("src/ini.h"), "ini/ini.h");
-    ini.addCSourceFile(.{ .file = b.dependency("ini", .{}).path("src/ini.c") });
+    ini.root_module.addIncludePath(b.dependency("ini", .{}).path("src"));
+    ini.root_module.addCSourceFile(.{ .file = b.dependency("ini", .{}).path("src/ini.c") });
     return ini;
 }
 
-fn createRpcmalloc(b: *std.Build, options: std.Build.StaticLibraryOptions) *std.Build.Step.Compile {
-    const rpmalloc = b.addStaticLibrary(.{
+fn createRpcmalloc(b: *std.Build, options: std.Build.Module.CreateOptions) *std.Build.Step.Compile {
+    const rpmalloc = b.addLibrary(.{
+        .linkage = .static,
         .name = "rpmalloc",
-        .target = options.target,
-        .optimize = options.optimize,
-        .pic = options.pic,
-        .strip = options.strip,
-        .link_libc = true,
+        .root_module = b.createModule(.{
+            .target = options.target.?,
+            .optimize = options.optimize.?,
+            .pic = options.pic,
+            .strip = options.strip,
+            .link_libc = true,
+        }),
     });
-    rpmalloc.addIncludePath(b.dependency("rpmalloc", .{}).path("rpmalloc"));
     rpmalloc.installHeadersDirectory(b.dependency("rpmalloc", .{}).path("rpmalloc"), "rpmalloc", .{});
-    rpmalloc.addCSourceFile(.{ .file = b.dependency("rpmalloc", .{}).path("rpmalloc/rpmalloc.c") });
+    rpmalloc.root_module.addIncludePath(b.dependency("rpmalloc", .{}).path("rpmalloc"));
+    rpmalloc.root_module.addCSourceFile(.{ .file = b.dependency("rpmalloc", .{}).path("rpmalloc/rpmalloc.c") });
 
-    if (options.target.result.os.tag.isDarwin() and options.target.result.os.tag != .ios) {
+    if (options.target.?.result.os.tag.isDarwin() and options.target.?.result.os.tag != .ios) {
         // Zig doesn't bundle `mach_vm.h` but it is unneeded anyway.
         const write_files = b.addWriteFiles();
         const fake_mach_vm = write_files.add("mach/mach_vm.h", "");
-        rpmalloc.addIncludePath(fake_mach_vm.dirname().dirname());
+        rpmalloc.root_module.addIncludePath(fake_mach_vm.dirname().dirname());
     }
     return rpmalloc;
 }
 
 fn createImgui(
     b: *std.Build,
-    options: std.Build.StaticLibraryOptions,
+    options: std.Build.Module.CreateOptions,
     legacy: bool,
     link_system_glfw: bool,
     link_system_freetype: bool,
 ) *std.Build.Step.Compile {
     const enable_freetype: bool = false;
 
-    const imgui = b.addStaticLibrary(.{
+    const imgui = b.addLibrary(.{
+        .linkage = .static,
         .name = "imgui",
-        .target = options.target,
-        .optimize = options.optimize,
-        .pic = options.pic,
-        .strip = options.strip,
+        .root_module = b.createModule(.{
+            .target = options.target.?,
+            .optimize = options.optimize.?,
+            .pic = options.pic,
+            .strip = options.strip,
+            .link_libc = true,
+            .link_libcpp = true,
+        }),
     });
-    imgui.linkLibC();
-    imgui.linkLibCpp();
-    imgui.addIncludePath(b.dependency("imgui", .{}).path(""));
     imgui.installHeadersDirectory(b.dependency("imgui", .{}).path(""), ".", .{});
-    imgui.addCSourceFiles(.{
+    imgui.root_module.addIncludePath(b.dependency("imgui", .{}).path(""));
+    imgui.root_module.addCSourceFiles(.{
         .root = b.dependency("imgui", .{}).path(""),
         .files = &.{
             "imgui.cpp",
@@ -776,50 +793,48 @@ fn createImgui(
         },
     });
     if (link_system_glfw) {
-        imgui.linkSystemLibrary("glfw");
+        imgui.root_module.linkSystemLibrary("glfw3", .{});
     } else {
         if (b.lazyDependency("glfw", .{
-            .target = options.target,
-            .optimize = options.optimize,
+            .target = options.target.?,
+            .optimize = options.optimize.?,
             .x11 = legacy,
             .wayland = true,
         })) |glfw_dependency| {
-            imgui.linkLibrary(glfw_dependency.artifact("glfw"));
-            // Is it even possible to have a static executable for Tracy? Maybe https://github.com/andrewrk/zig-window is the solution
-            if (options.target.result.os.tag != .windows and !options.target.result.os.tag.isDarwin()) {
-                imgui.linkSystemLibrary("GL");
-            }
-        }
-        if (b.lazyImport(@This(), "glfw")) |glfw| {
-            glfw.addPaths(&imgui.root_module);
+            imgui.root_module.linkLibrary(glfw_dependency.artifact("glfw"));
         }
     }
 
-    imgui.addCSourceFiles(.{
+    // Is it even possible to have a static executable for Tracy? Maybe https://github.com/andrewrk/zig-window is the solution
+    if (options.target.?.result.os.tag != .windows and !options.target.?.result.os.tag.isDarwin()) {
+        imgui.root_module.linkSystemLibrary("GL", .{});
+    }
+
+    imgui.root_module.addCSourceFiles(.{
         .root = b.dependency("imgui", .{}).path("backends"),
         .files = &.{
             "imgui_impl_glfw.cpp",
             "imgui_impl_opengl3.cpp",
         },
     });
-    imgui.root_module.addCMacro("GLFW_INCLUDE_NONE", "1");
-    imgui.addIncludePath(b.dependency("imgui", .{}).path("backends"));
     imgui.installHeadersDirectory(b.dependency("imgui", .{}).path("backends"), "imgui", .{});
+    imgui.root_module.addCMacro("GLFW_INCLUDE_NONE", "1");
+    imgui.root_module.addIncludePath(b.dependency("imgui", .{}).path("backends"));
 
     if (enable_freetype) {
         if (link_system_freetype) {
-            imgui.linkSystemLibrary("freetype");
+            imgui.root_module.linkSystemLibrary("freetype", .{});
         } else if (b.lazyDependency("freetype", .{
-            .target = options.target,
-            .optimize = options.optimize,
+            .target = options.target.?,
+            .optimize = options.optimize.?,
             .enable_brotli = false,
         })) |freetype_dependency| {
-            imgui.linkLibrary(freetype_dependency.artifact("freetype"));
+            imgui.root_module.linkLibrary(freetype_dependency.artifact("freetype"));
         }
 
         imgui.root_module.addCMacro("IMGUI_ENABLE_FREETYPE", "1");
-        imgui.addIncludePath(b.dependency("imgui", .{}).path("misc/freetype"));
-        imgui.addCSourceFile(.{
+        imgui.root_module.addIncludePath(b.dependency("imgui", .{}).path("misc/freetype"));
+        imgui.root_module.addCSourceFile(.{
             .file = b.dependency("imgui", .{}).path("misc/freetype/imgui_freetype.cpp"),
         });
     }

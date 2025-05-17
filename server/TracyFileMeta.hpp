@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <stddef.h>
 
-#include "lz4/lz4.h"
+#include "lz4.h"
 #include "zstd.h"
 
 namespace tracy

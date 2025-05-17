@@ -21,7 +21,7 @@
 #include <inttypes.h>
 #include <sys/stat.h>
 
-#include <capstone/capstone.h>
+#include <capstone.h>
 
 #define ZDICT_STATIC_LINKING_ONLY
 #include "zdict.h"

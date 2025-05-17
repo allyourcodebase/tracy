@@ -79,7 +79,7 @@
 #include "TracySysTrace.hpp"
 #include "../tracy/TracyC.h"
 
-#include "lz4/lz4.h"
+#include "lz4.h"
 #include "rpmalloc/rpmalloc.h"
 
 #ifdef TRACY_PORT

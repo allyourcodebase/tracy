@@ -19,8 +19,8 @@
 #include "TracyFileMeta.hpp"
 #include "../public/common/TracyForceInline.hpp"
 
-#include "lz4/lz4.h"
-#include "lz4/lz4hc.h"
+#include "lz4.h"
+#include "lz4hc.h"
 #include "zstd.h"
 
 namespace tracy

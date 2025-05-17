@@ -1,5 +1,8 @@
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
+#define GLAD_GL_IMPLEMENTATION
+#include "glad/gl.h"
+
+#define GLAD_EGL_IMPLEMENTATION
+#include "glad/egl.h"
 
 #define GLAD_GL_IMPLEMENTATION
 #include "glad/gl.h"
@@ -785,10 +788,16 @@ Backend::Backend( const char* title, const std::function<void()>& redraw, const 
         EGL_NONE
     };
 
+    int eglVersion = gladLoaderLoadEGL( nullptr );
+    if ( !eglVersion ) { fprintf( stderr, "Unable to load EGL\n" ); exit( 1 ); }
+
     s_eglDpy = eglGetPlatformDisplay( EGL_PLATFORM_WAYLAND_KHR, s_dpy, nullptr );
     EGLBoolean res;
     res = eglInitialize( s_eglDpy, nullptr, nullptr );
     if( res != EGL_TRUE ) { fprintf( stderr, "Cannot initialize EGL!\n" ); exit( 1 ); }
+
+    eglVersion = gladLoaderLoadEGL( s_eglDpy );
+    if ( !eglVersion ) { fprintf( stderr, "Unable to reload EGL\n" ); exit( 1 ); }
 
     EGLint count;
     EGLConfig eglConfig;
