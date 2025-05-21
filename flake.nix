@@ -53,7 +53,7 @@
                 ++ lib.optionals (stdenv.hostPlatform.isLinux) [libxkbcommon];
               nativeBuildInputs = with pkgs;
                 [zig_hook pkg-config makeWrapper]
-                ++ lib.optionals (stdenv.hostPlatform.isLinux) [wayland-scanner];
+                ++ lib.optionals (stdenv.hostPlatform.isLinux) [wayland-scanner wayland-protocols];
               zigBuildFlags = ["--system" "${deps}"];
 
               postFixup = pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''

@@ -352,7 +352,25 @@ pub fn build(b: *std.Build) !void {
         else
             null;
 
-        if (b.lazyDependency("wayland_protocols", .{})) |wayland_protocols| {
+        const use_system_wayland_protocols = b.systemIntegrationOption("wayland-protocols", .{});
+
+        const wayland_protocols_dir: ?std.Build.LazyPath = if (use_system_wayland_protocols) blk: {
+            var code: u8 = undefined;
+            const pkgdatadir = if (b.runAllowFail(&[_][]const u8{
+                b.graph.env_map.get("PKG_CONFIG") orelse "pkg-config",
+                "wayland-protocols",
+                "--variable=pkgdatadir",
+            }, &code, .Ignore)) |stdout| stdout else |err| switch (err) {
+                error.ProcessTerminated => return error.PkgConfigCrashed,
+                error.ExecNotSupported => return error.PkgConfigFailed,
+                error.ExitCodeFailure => return error.PkgConfigFailed,
+                error.FileNotFound => return error.PkgConfigNotInstalled,
+                else => return err,
+            };
+            break :blk .{ .cwd_relative = std.mem.trim(u8, pkgdatadir, &std.ascii.whitespace) };
+        } else if (b.lazyDependency("wayland_protocols", .{})) |wayland_protocols| wayland_protocols.path(".") else null;
+
+        if (wayland_protocols_dir) |wayland_protocols| {
             for (
                 [_][]const u8{
                     "staging/xdg-activation/xdg-activation-v1.xml",
@@ -385,14 +403,14 @@ pub fn build(b: *std.Build) !void {
 
                 {
                     run_wayland_scanner1.addArg("client-header");
-                    run_wayland_scanner1.addFileArg(wayland_protocols.path(input_file));
+                    run_wayland_scanner1.addFileArg(wayland_protocols.path(b, input_file));
                     const header_file = run_wayland_scanner1.addOutputFileArg(b.fmt("{s}-client-protocol.h", .{output_filename}));
                     tracy_profiler.root_module.addIncludePath(header_file.dirname());
                 }
 
                 {
                     run_wayland_scanner2.addArg("public-code");
-                    run_wayland_scanner2.addFileArg(wayland_protocols.path(input_file));
+                    run_wayland_scanner2.addFileArg(wayland_protocols.path(b, input_file));
                     const source_file = run_wayland_scanner2.addOutputFileArg(b.fmt("{s}.c", .{output_filename}));
                     tracy_profiler.root_module.addCSourceFile(.{ .file = source_file });
                 }
