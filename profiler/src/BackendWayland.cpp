@@ -1,6 +1,3 @@
-#define GLAD_GL_IMPLEMENTATION
-#include "glad/gl.h"
-
 #define GLAD_EGL_IMPLEMENTATION
 #include "glad/egl.h"
 
