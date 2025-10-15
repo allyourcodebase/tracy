@@ -17,7 +17,7 @@
         system: let
           pkgs = nixpkgs.legacyPackages.${system};
           deps = pkgs.callPackage ./build.zig.zon.nix {};
-          zig_hook = pkgs.zig_0_14.hook.overrideAttrs {
+          zig_hook = pkgs.zig_0_15.hook.overrideAttrs {
             zig_default_flags = "-Doptimize=ReleaseFast -Dcpu=baseline --color off";
           };
           fs = pkgs.lib.fileset;

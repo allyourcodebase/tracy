@@ -1,18 +1,7 @@
 const std = @import("std");
 
-// Although this function looks imperative, note that its job is to
-// declaratively construct a build graph that will be executed by an external
-// runner.
 pub fn build(b: *std.Build) !void {
-    // Standard target options allows the person running `zig build` to choose
-    // what target to build for. Here we do not override the defaults, which
-    // means any target is allowed, and the default is native. Other options
-    // for restricting supported target set are available.
     const target = b.standardTargetOptions(.{});
-
-    // Standard optimization options allow the person running `zig build` to select
-    // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
-    // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
     const linkage = b.option(std.builtin.LinkMode, "linkage", "Link mode") orelse .static;
@@ -98,9 +87,6 @@ pub fn build(b: *std.Build) !void {
         tracy_client.root_module.linkSystemLibrary("execinfo", .{});
     }
 
-    // This declares intent for the static library to be installed into the
-    // standard location when the user invokes the "install" step (the default
-    // step when running `zig build`).
     b.installArtifact(tracy_client);
 
     if (enable) tracy_client.root_module.addCMacro("TRACY_ENABLE", "1");
@@ -149,11 +135,11 @@ pub fn build(b: *std.Build) !void {
         .target = target,
         .optimize = optimize,
     })) |dependency| dependency.artifact("capstone") else null;
-    const nfd = b.dependency("nativefiledialog_extended", .{
+    const nfd = if (no_fileselector) null else if (b.lazyDependency("nativefiledialog_extended", .{
         .target = target,
         .optimize = optimize,
         .portal = portal,
-    }).artifact("nfd");
+    })) |dependency| dependency.artifact("nfd") else null;
 
     const tracy_server = b.addLibrary(.{
         .linkage = linkage,
@@ -225,7 +211,7 @@ pub fn build(b: *std.Build) !void {
     if (no_fileselector) {
         tracy_profiler.root_module.addCMacro("TRACY_NO_FILESELECTOR", "1");
     } else {
-        tracy_profiler.root_module.linkLibrary(nfd);
+        if (nfd) |compile| tracy_profiler.root_module.linkLibrary(compile);
     }
     tracy_profiler.root_module.addCMacro("__DATE__", "\"??? ?? ????\"");
     tracy_profiler.root_module.addCMacro("__TIME__", "\"??:??:??\"");
@@ -478,36 +464,16 @@ pub fn build(b: *std.Build) !void {
     if (symbol_offline_resolve) tracy_profiler.root_module.addCMacro("TRACY_SYMBOL_OFFLINE_RESOLVE", "1");
     if (libbacktrace_elf_dynload_support) tracy_profiler.root_module.addCMacro("TRACY_LIBBACKTRACE_ELF_DYNLOAD_SUPPORT", "1");
 
-    // This declares intent for the executable to be installed into the
-    // standard location when the user invokes the "install" step (the default
-    // step when running `zig build`).
     const install_profiler = b.addInstallArtifact(tracy_profiler, .{});
     b.getInstallStep().dependOn(&install_profiler.step);
 
-    // This declares a separate step that will only install the "tracy-profiler"
     const install_profiler_step = b.step("install-profiler", "Only install the tracy-profiler to prefix path");
     install_profiler_step.dependOn(&install_profiler.step);
 
-    // This *creates* a Run step in the build graph, to be executed when another
-    // step is evaluated that depends on it. The next line below will establish
-    // such a dependency.
     const run_cmd = b.addRunArtifact(tracy_profiler);
-
-    // By making the run step depend on the install tracy profiler step, it will be run from the
-    // installation directory rather than directly from within the cache directory.
-    // This is not necessary, however, if the application depends on other installed
-    // files, this ensures they will be present and in the expected location.
     run_cmd.step.dependOn(&install_profiler.step);
+    if (b.args) |args| run_cmd.addArgs(args);
 
-    // This allows the user to pass arguments to the application in the build
-    // command itself, like this: `zig build run -- arg1 arg2 etc`
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
-
-    // This creates a build step. It will be visible in the `zig build --help` menu,
-    // and can be selected like this: `zig build run`
-    // This will evaluate the `run` step rather than the default, which is "install".
     const run_step = b.step("run", "Run Tracy Profiler");
     run_step.dependOn(&run_cmd.step);
 
