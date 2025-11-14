@@ -6,7 +6,7 @@
 #include <string.h>
 
 #define XXH_INLINE_ALL
-#include "tracy_xxhash.h"
+#include "xxhash.h"
 
 namespace tracy
 {

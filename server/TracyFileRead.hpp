@@ -26,7 +26,6 @@
 #include "TracyFileMeta.hpp"
 #include "TracyMmap.hpp"
 #include "../public/common/TracyYield.hpp"
-#include "../public/common/tracy_lz4.hpp"
 #include "../public/common/TracyForceInline.hpp"
 
 namespace tracy

@@ -1,0 +1,149 @@
+.{
+    .name = .tracy,
+    .version = "0.12.2",
+    .fingerprint = 0x255a89eecd27f4ce, // Changing this has security and trust implications.
+    .minimum_zig_version = "0.15.1",
+    .dependencies = .{
+        .glfw = .{ // A fork of GLFW packaged for the Zig build system
+            .url = "git+https://github.com/terraquad/glfw.git#00a723504e6451d8210031ec7940f2a6841cc0a6",
+            .hash = "glfw_c-3.4.0-_9LYGLaqGQAI0baWDUTJHNdld2y6gKrsbLvOwUse4Q6x",
+            .lazy = true,
+        },
+        .capstone = .{ // Availability for capstone as Zig dependency
+            .url = "git+https://github.com/allyourcodebase/capstone.git#90c3e2512286b077631da5361708562e333ae856",
+            .hash = "capstone-6.0.0-Alpha4-tmNUgdI8AADDVL-qUUVmU0IGuFGpjz6-O7sBRjeB53yb",
+            .lazy = true,
+        },
+        .curl = .{ // curl ported to the zig build system
+            .url = "git+https://github.com/allyourcodebase/curl.git#0180cf1de923f479633b0d7a13aee4ad482b3ead",
+            .hash = "curl-8.15.0-mFDAWPDvAACDblXwmIxaAM-mCWYYk8JgfWpuKFQ9pKAT",
+            .lazy = true,
+        },
+        .zstd = .{ // zstd ported to the zig build system
+            .url = "git+https://github.com/allyourcodebase/zstd.git?ref=1.5.7#01327d49cbc56dc24c20a167bb0055d7fc23de84",
+            .hash = "zstd-1.5.7-KEItkJ8vAAC5_rRlKmLflYQ-eKXbAIQBWZNmmJtS18q0",
+            .lazy = true,
+        },
+        .lz4 = .{ // lz4 ported to the zig build system
+            .url = "git+https://github.com/allyourcodebase/lz4.git?ref=1.10.0-6#41f52ab227caf9d48cf88c89a4d2946caa12b102",
+            .hash = "lz4-1.10.0-6-ewyzw-4NAAAWDpY4xpiqr4LQhZQAC0x_rGnW2iPh6jk2",
+            .lazy = true,
+        },
+        .nativefiledialog_extended = .{ // nativefiledialog-extended ported to the zig build system
+            .url = "git+https://github.com/allyourcodebase/nativefiledialog-extended.git?ref=1.2.1-2#dd47ba4b99b85c78f30a8faca0518ed913268c0a",
+            .hash = "nativefiledialog_extended-1.2.1-2-_pDry5gcAAA701XtymPdScWmrLQ5Zuw9yZYm_bxp7DkQ",
+            .lazy = true,
+        },
+        // .freetype = .{ // A fork of freetype packaged for the Zig build system
+        //     .url = "git+https://github.com/hexops/freetype.git#972cd37bccecae2cc9f54cf0b562263a13209d02",
+        //     .hash = "freetype-0.0.0-AAAAAA5JcwBMujojfNLEq5g_WijZtU56mRLYx8bjjiMU",
+        //     .lazy = true,
+        // },
+        .wayland = .{
+            .url = "git+https://github.com/allyourcodebase/wayland.git?ref=1.24.0-2#209cdc0d604facd02f67a93a145188d10a54f1ce",
+            .hash = "wayland-1.24.0-2-dxEBa4RlAAABLcAFSA_vUHi0KqowweDZzkcOQ8KNG4N7",
+            .lazy = true,
+        },
+        .wayland_protocols = .{
+            .url = "git+https://gitlab.freedesktop.org/wayland/wayland-protocols.git?ref=1.38#9ac1a0977eea1b2f525e375089131f7d696a74ee",
+            .hash = "N-V-__8AAPSiCwBmhGfdDQlw65XlO55QP1pogBUo1ZeGUv_C",
+            .lazy = true,
+        },
+        .libxkbcommon = .{
+            .url = "git+https://github.com/allyourcodebase/libxkbcommon.git?ref=1.11.0#4b9cf4d6a1411aa471d25cd0498b288857e377fd",
+            .hash = "libxkbcommon-1.11.0-93LaF6pwAgCZ0MlbC6OUufCvH5X3AktLv6sIVRrG2nRj",
+            .lazy = true,
+        },
+
+        // C/C++ dependencies without a Zig build script
+
+        .ini = .{ // A tiny ANSI C library for loading .ini config files
+            .url = "git+https://github.com/rxi/ini.git#13a254c9e38def8924a83badfea5eda5a01b9295",
+            .hash = "N-V-__8AALwkAAB_H_lRcdLYz-_DCoAy71ze0CtKLsHdDRD-",
+        },
+        .rpmalloc = .{ // Public domain cross platform lock free thread caching 16-byte aligned memory allocator implemented in C
+            .url = "git+https://github.com/mjansson/rpmalloc.git?ref=1.4.5#e4393ff85585d91400bcbad2e7266c011075b673",
+            .hash = "N-V-__8AAEi9BgBKV3vzD6pzRAbfs1f7lNp1wsrArxR79lx6",
+        },
+        .imgui = .{ // Dear ImGui: Bloat-free Graphical User interface
+            .url = "git+https://github.com/ocornut/imgui.git?ref=v1.92.1-docking#44aa9a4b3a6f27d09a4eb5770d095cbd376dfc4b",
+            .hash = "N-V-__8AAMSpeAAjIlPRk36GN81oqHOrwAtfmTZdOcDg42BM",
+        },
+        .base64 = .{ // Fast Base64 stream encoder/decoder in C99, with SIMD acceleration
+            .url = "git+https://github.com/aklomp/base64.git?ref=v0.5.2#8bdda2d47caf8b066999c5bd01069e55bcd0d396",
+            .hash = "N-V-__8AAOcwBQBzPPchGzrzVG8hpgzRHXrUD-F_BDqCmAL3",
+        },
+        .md4c = .{ // C Markdown parser
+            .url = "git+https://github.com/mity/md4c.git?ref=release-0.5.2#729e6b8b320caa96328968ab27d7db2235e4fb47",
+            .hash = "N-V-__8AABchEAAlECji-MmwhoTDo_4aoyB1HkgVStV-vfho",
+        },
+        .pugixml = .{ // Light-weight, simple and fast XML parser for C++ with XPath support
+            .url = "git+https://github.com/zeux/pugixml.git?ref=v1.15#ee86beb30e4973f5feffe3ce63bfa4fbadf72f38",
+            .hash = "N-V-__8AADXtKQAiMpWWNo5TPa37aXJx68JYsJq5gfycIjE_",
+        },
+        .@"tidy-html5" = .{ // The granddaddy of HTML tools, with support for modern standards
+            .url = "git+https://github.com/htacg/tidy-html5.git?ref=5.8.0#1ca37471b48a3498f985509828cb3cf85ea129f8",
+            .hash = "N-V-__8AAJPHSwBnLvtcY57RjGXHa9KuzDD5_55eeK9sC-F7",
+        },
+
+        // C/C++ header-only dependencies
+
+        .getopt_port = .{ // BSD-licensed getopt implementation
+            .url = "git+https://github.com/kimgr/getopt_port.git#9d3d387087d252970923db7f297f681622c4e026",
+            .hash = "N-V-__8AAJKtAACXam4qGbql--FmlkH5sGRDUY6n_tqMfZW-",
+        },
+        .stb = .{ // single-file public domain libraries
+            .url = "git+https://github.com/nothings/stb.git#ae721c50eaf761660b4f90cc590453cdb0c2acd0",
+            .hash = "N-V-__8AADb7TQBhnAapR8-szphSk_8WmU22BY8jadPC_8-d",
+        },
+        .dtl = .{ // diff template library
+            .url = "git+https://github.com/cubicdaiya/dtl.git?ref=v1.21#32567bb9ec704f09040fb1ed7431a3d967e3df03",
+            .hash = "N-V-__8AAKQTAgC4IUwwDQSA3kMErF_02NAb-DgnNFymn_wr",
+        },
+        .nlohmann_json = .{ // JSON for Modern C++
+            .url = "git+https://github.com/nlohmann/json.git?ref=v3.12.0#55f93686c01528224f448c19128836e7df245f72",
+            .hash = "N-V-__8AANqC8wBtv10C_41rBAgWfTMpQow7tzRi4h6LQYxm",
+        },
+        .pdqsort = .{ // Pattern-defeating quicksort.
+            .url = "git+https://github.com/orlp/pdqsort.git#b1ef26a55cdb60d236a5cb199c4234c704f46726",
+            .hash = "N-V-__8AAJ7xAABXU9I52yQSQ-zeeJEohtrHKj9ekUVZdlOR",
+        },
+        .ppqsort = .{ // PPQSort - Parallel Pattern Quicksort.
+            .url = "git+https://github.com/GabTux/PPQSort.git?ref=v1.0.5#249da1c63b06824befc4ed643b883328cfdd6ba0",
+            .hash = "N-V-__8AALk1AwB_-PJsG-Q9F1OHqaGovuaHaqFCkhppJHXw",
+        },
+        // THIS PROJECT HAS BEEN ARCHIVED
+        .robin_hood_hashing = .{ // Fast & memory efficient hashtable based on robin hood hashing
+            .url = "git+https://github.com/martinus/robin-hood-hashing.git#7697343363af4cc3f42cab17be49e6af9ab181e2",
+            .hash = "N-V-__8AAMC4CwDqHbQUv2a4lEr_UXtrXeW5CWU6X3mzDLo6",
+        },
+        .xxHash = .{ // Extremely fast non-cryptographic hash algorithm
+            .url = "git+https://github.com/Cyan4973/xxHash.git#a57f6cce2698049863af8c25787084ae0489d849",
+            .hash = "N-V-__8AAGS5UgB9tuEDsjOj_PBuqhvifei8hQNtCQwmN6g4",
+        },
+        .usearch = .{ // Fast Open-Source Search & Clustering engine
+            .url = "git+https://github.com/unum-cloud/usearch.git?ref=v2.19.1#bda207cca92e130cfc2c39065681c75a70f0e32d",
+            .hash = "N-V-__8AALyEGwBlGkgGPJC0wE0QWREXnRMzoGRJ7-BspmtR",
+        },
+        .f16 = .{ // Conversion to/from half-precision floating point formats
+            .url = "git+https://github.com/Maratyszcza/FP16.git#3d2de1816307bac63c16a297e8c4dc501b4076df",
+            .hash = "N-V-__8AAH8TBgB7tfUQiFJqV8veMMRCP4aM2xjP62YHbA7U",
+        },
+    },
+    .paths = .{
+        "capture",
+        "csvexport",
+        "import",
+        "include",
+        "manual/tracy.md",
+        "profiler",
+        "public",
+        "server",
+        "update",
+
+        "build.zig",
+        "build.zig.zon",
+        "LICENSE",
+        "README.md",
+    },
+}

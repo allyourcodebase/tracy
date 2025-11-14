@@ -15,7 +15,7 @@
 #include "TracyStorage.hpp"
 #include "TracyUtility.hpp"
 #include "TracyWorker.hpp"
-#include "tracy_xxhash.h"
+#include "xxhash.h"
 
 #include "data/Manual.hpp"
 

@@ -1,28 +1,55 @@
+[![CI](https://github.com/allyourcodebase/tracy/actions/workflows/build.yml/badge.svg)](https://github.com/allyourcodebase/tracy/actions)
+
 # Tracy Profiler
 
-[![Sponsor](.github/sponsor.png)](https://github.com/sponsors/wolfpld/)
+This is [Tracy](https://github.com/wolfpld/tracy), packaged for [Zig](https://ziglang.org/).
 
-### A real time, nanosecond resolution, remote telemetry, hybrid frame and sampling profiler for games and other applications.
+## Installation
 
-Tracy supports profiling CPU (Direct support is provided for C, C++, Lua, Python and Fortran integration. At the same time, third-party bindings to many other languages exist on the internet, such as [Rust](https://github.com/nagisa/rust_tracy_client), [Zig](https://github.com/tealsnow/zig-tracy), [C#](https://github.com/clibequilibrium/Tracy-CSharp), [OCaml](https://github.com/imandra-ai/ocaml-tracy), [Odin](https://github.com/oskarnp/odin-tracy), etc.), GPU (All major graphic APIs: OpenGL, Vulkan, Direct3D 11/12, Metal, OpenCL, CUDA.), memory allocations, locks, context switches, automatically attribute screenshots to captured frames, and much more.
+Install Zig 0.15.2 and then run the following command:
 
-- [Documentation](https://github.com/wolfpld/tracy/releases/latest/download/tracy.pdf) for usage and build process instructions
-- [Releases](https://github.com/wolfpld/tracy/releases) containing the documentation (`tracy.pdf`) and compiled Windows x64 binaries (`Tracy-<version>.7z`) as assets
-- [Changelog](NEWS)
-- [Interactive demo](https://tracy.nereid.pl/)
+```bash
+zig build install-profiler
+./zig-out/bin/tracy-profiler
+```
 
-![](doc/profiler.png)
+You can also directly run the Tracy Profiler with the "run" step:
 
-![](doc/profiler2.png)
+```bash
+zig build run
+```
 
-![](doc/profiler3.png)
+### System Dependencies
 
-[An Introduction to Tracy Profiler in C++ - Marcos Slomp - CppCon 2023](https://youtu.be/ghXk3Bk5F2U?t=37)
+When building for Windows or macOS, no system dependencies are required.
 
-[Introduction to Tracy Profiler v0.2](https://www.youtube.com/watch?v=fB5B46lbapc)  
-[New features in Tracy Profiler v0.3](https://www.youtube.com/watch?v=3SXpDpDh2Uo)  
-[New features in Tracy Profiler v0.4](https://www.youtube.com/watch?v=eAkgkaO8B9o)  
-[New features in Tracy Profiler v0.5](https://www.youtube.com/watch?v=P6E7qLMmzTQ)  
-[New features in Tracy Profiler v0.6](https://www.youtube.com/watch?v=uJkrFgriuOo)  
-[New features in Tracy Profiler v0.7](https://www.youtube.com/watch?v=_hU7vw00MZ4)  
-[New features in Tracy Profiler v0.8](https://www.youtube.com/watch?v=30wpRpHTTag)
+The graphical profiler has the following dependencies on linux:
+
+- `libGL`: runtime dependency
+- `libEGL`: runtime dependency, not required when using `-Dlegacy`
+- `libxkbcommon`: not required when using `-Dlegacy`
+- `libdbus-1`: can be disabled with `-Dno-fileselector` or `-Dportal=false`
+- `libgtk+-3.0`: only required when using `-Dportal=false`
+
+#### System Integrations
+
+Tracy has been ported with support for Zig's [System Integration Options](https://ziglang.org/download/0.12.0/release-notes.html#Ability-to-Declare-Optional-System-Library-Integration). By default, all system dependencies will be avoided except `libxkbcommon`.
+
+### Cross Compilation
+
+#### Windows
+
+Cross compiling to windows works out of the box. It can even connect to a client that is running a different host (Linux).
+
+```bash
+zig build -Dtarget=x86_64-windows
+zig build run -Dtarget=x86_64-windows -fwine # run the tracy profiler with Wine
+```
+
+#### Linux
+
+Cross compiling to macOS can successfully produce a binary. The binary has a runtime dependency on `libGL` and will fail if it can't be found with `dlopen`.
+
+```bash
+zig build -Dtarget=x86_64-linux -Dno-fileselector -Dlegacy
+```

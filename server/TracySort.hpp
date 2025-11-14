@@ -2,7 +2,7 @@
 #define __TRACYSORT_HPP__
 
 #ifdef __EMSCRIPTEN__
-#  include "tracy_pdqsort.h"
+#  include "pdqsort.h"
 #else
 #  include <ppqsort.h>
 #endif

@@ -1,4 +1,4 @@
-#include "../server/tracy_robin_hood.h"
+#include "robin_hood.h"
 #include "TracyProfiler.hpp"
 #include "TracyThread.hpp"
 #include "tracy/TracyC.h"

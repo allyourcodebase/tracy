@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "TracyLlmEmbeddings.hpp"
-#include "tracy_robin_hood.h"
+#include "robin_hood.h"
 
 class EmbedData;
 

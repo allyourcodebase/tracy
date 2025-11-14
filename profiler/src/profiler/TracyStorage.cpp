@@ -9,6 +9,7 @@
 #ifdef _WIN32
 #  include <direct.h>
 #  include <windows.h>
+#  include <errno.h>
 #else
 #  include <dirent.h>
 #  include <sys/types.h>

@@ -1,7 +1,10 @@
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <backends/imgui_impl_opengl3.h>
-#include <backends/imgui_impl_opengl3_loader.h>
+#define GLAD_EGL_IMPLEMENTATION
+#include "glad/egl.h"
+
+#define GLAD_GL_IMPLEMENTATION
+#include "glad/gl.h"
+
+#include "imgui/imgui_impl_opengl3.h"
 
 #include <chrono>
 #include <linux/input-event-codes.h>
@@ -28,7 +31,8 @@
 #include "wayland-xdg-toplevel-icon-client-protocol.h"
 
 #include "profiler/TracyImGui.hpp"
-#include "stb_image_resize.h"
+
+#include "deprecated/stb_image_resize.h"
 
 #include "Backend.hpp"
 #include "RunQueue.hpp"
@@ -1010,10 +1014,16 @@ Backend::Backend( const char* title, const std::function<void()>& redraw, const 
         EGL_NONE
     };
 
+    int eglVersion = gladLoaderLoadEGL( nullptr );
+    if ( !eglVersion ) { fprintf( stderr, "Unable to load EGL\n" ); exit( 1 ); }
+
     s_eglDpy = eglGetPlatformDisplay( EGL_PLATFORM_WAYLAND_KHR, s_dpy, nullptr );
     EGLBoolean res;
     res = eglInitialize( s_eglDpy, nullptr, nullptr );
     if( res != EGL_TRUE ) { fprintf( stderr, "Cannot initialize EGL!\n" ); exit( 1 ); }
+
+    eglVersion = gladLoaderLoadEGL( s_eglDpy );
+    if ( !eglVersion ) { fprintf( stderr, "Unable to reload EGL\n" ); exit( 1 ); }
 
     EGLint count;
     EGLConfig eglConfig;
@@ -1045,6 +1055,9 @@ Backend::Backend( const char* title, const std::function<void()>& redraw, const 
     if( !s_eglCtx ) { fprintf( stderr, "Cannot create OpenGL 3.2 Core Profile context!\n" ); exit( 1 ); }
     res = eglMakeCurrent( s_eglDpy, s_eglSurf, s_eglSurf, s_eglCtx );
     if( res != EGL_TRUE ) { fprintf( stderr, "Cannot make EGL context current!\n" ); exit( 1 ); }
+
+    int glVersion = gladLoaderLoadGL();
+    if ( !glVersion ) { fprintf( stderr, "Unable to load OpenGL\n" ); exit( 1 ); }
 
     ImGui_ImplOpenGL3_Init( "#version 150" );
 
@@ -1125,6 +1138,7 @@ Backend::~Backend()
     if( s_xkbKeymap ) xkb_keymap_unref( s_xkbKeymap );
     xkb_context_unref( s_xkbCtx );
     wl_display_disconnect( s_dpy );
+    gladLoaderUnloadGL();
 }
 
 void Backend::Show()
