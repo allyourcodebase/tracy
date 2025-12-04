@@ -133,6 +133,7 @@
     .paths = .{
         "capture",
         "csvexport",
+        "icon",
         "import",
         "include",
         "manual/tracy.md",
