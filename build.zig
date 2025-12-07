@@ -359,7 +359,7 @@ pub fn build(b: *std.Build) !void {
     // `windows.h` which is problematic when cross compiling
     // from a case-sensitive filesystem.
     // https://github.com/llvm/llvm-project/issues/161400
-    if (target.result.os.tag == .windows) {
+    if (target.result.os.tag == .windows and b.graph.host.result.os.tag != .windows) {
         const upper_case_windows_h = b.addWriteFiles().add("Windows.h", "#include <windows.h>");
         tracy_profiler.root_module.addIncludePath(upper_case_windows_h.dirname());
     }
