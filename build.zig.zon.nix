@@ -55,11 +55,11 @@ linkFarm "zig-packages" [
     };
   }
   {
-    name = "N-V-__8AAAu4fQBE-TxAn-Lk6rxPToxAGnzeIiKtzHNTeoai";
+    name = "N-V-__8AALA2eQDNs-xONPoEpq-tvOh-3J0shaP2kjA5bck0";
     path = fetchgit {
       url = "https://github.com/ocornut/imgui";
-      rev = "3912b3d9a9c1b3f17431aebafd86d2f40ee6e59c";
-      hash = "sha256-/jVT7+874LCeSF/pdNVTFoSOfRisSqxCJnt5/SGCXPQ=";
+      rev = "1f7f1f54af38b0350d8c0008b096a9af6de299c7";
+      hash = "sha256-RmfmhuEgWmnSNJ+M1up2KCpi5FgA97GF3VZAIMmNtZk=";
     };
   }
   {

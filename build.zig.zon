@@ -66,8 +66,8 @@
             .hash = "N-V-__8AAEi9BgBKV3vzD6pzRAbfs1f7lNp1wsrArxR79lx6",
         },
         .imgui = .{ // Dear ImGui: Bloat-free Graphical User interface
-            .url = "git+https://github.com/ocornut/imgui.git?ref=v1.92.5-docking#3912b3d9a9c1b3f17431aebafd86d2f40ee6e59c",
-            .hash = "N-V-__8AAAu4fQBE-TxAn-Lk6rxPToxAGnzeIiKtzHNTeoai",
+            .url = "git+https://github.com/ocornut/imgui.git?ref=v1.92.2b-docking#1f7f1f54af38b0350d8c0008b096a9af6de299c7",
+            .hash = "N-V-__8AALA2eQDNs-xONPoEpq-tvOh-3J0shaP2kjA5bck0",
         },
         .base64 = .{ // Fast Base64 stream encoder/decoder in C99, with SIMD acceleration
             .url = "git+https://github.com/aklomp/base64.git?ref=v0.5.2#8bdda2d47caf8b066999c5bd01069e55bcd0d396",
