@@ -9,7 +9,7 @@
 #include "TracyUtility.hpp"
 #include "TracyView.hpp"
 #include "TracyStorage.hpp"
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 #include "../Fonts.hpp"
 
 namespace tracy

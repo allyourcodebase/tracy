@@ -25,7 +25,7 @@
 #include "../../server/TracyWorker.hpp"
 
 #ifdef _WIN32
-#  include "../../getopt/getopt.h"
+#  include "getopt.h"
 #endif
 
 

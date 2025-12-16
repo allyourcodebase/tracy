@@ -8,7 +8,7 @@
 #endif
 
 #ifdef TRACY_MANUAL_LIFETIME
-#  include "tracy_rpmalloc.hpp"
+#  include "rpmalloc/rpmalloc.hpp"
 #endif
 
 namespace tracy

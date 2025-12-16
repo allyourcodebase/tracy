@@ -66,14 +66,14 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <thread>
+#include <lz4.h>
 
 #include "../common/TracyAlign.hpp"
 #include "../common/TracyAlloc.hpp"
 #include "../common/TracySocket.hpp"
 #include "../common/TracySystem.hpp"
 #include "../common/TracyYield.hpp"
-#include "../common/tracy_lz4.hpp"
-#include "tracy_rpmalloc.hpp"
+#include "rpmalloc/rpmalloc.h"
 #include "TracyCallstack.hpp"
 #include "TracyDebug.hpp"
 #include "TracyDxt1.hpp"
@@ -933,7 +933,7 @@ static Thread* s_symbolThread;
 std::atomic<bool> s_symbolThreadGone { false };
 #endif
 #ifdef TRACY_HAS_SYSTEM_TRACING
-static std::atomic<Thread*> s_sysTraceThread = nullptr;
+static std::atomic<Thread*> s_sysTraceThread(nullptr);
 #endif
 
 #if defined __linux__ && !defined TRACY_NO_CRASH_HANDLER

@@ -1,6 +1,8 @@
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
-#include <backends/imgui_impl_opengl3_loader.h>
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+#define GLAD_GL_IMPLEMENTATION
+#include "glad/gl.h"
 
 #include <chrono>
 #include <GLFW/glfw3.h>
@@ -142,6 +144,10 @@ Backend::Backend( const char* title, const std::function<void()>& redraw, const 
 #endif
 
     glfwMakeContextCurrent( s_window );
+
+    int glVersion = gladLoadGL(glfwGetProcAddress);
+    if ( !glVersion ) { fprintf( stderr, "Unable to load OpenGL\n" ); exit( 1 ); }
+
     glfwSwapInterval( 1 ); // Enable vsync
     glfwSetWindowRefreshCallback( s_window, []( GLFWwindow* ) { tracy::s_wasActive = true; s_redraw(); } );
 

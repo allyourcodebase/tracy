@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <string>
 
-#include "../../public/common/tracy_lz4hc.hpp"
+#include "lz4.h"
+#include "lz4hc.h"
 
 static void Usage()
 {
@@ -38,9 +39,9 @@ int main( int argc, char** argv )
     fread( data, 1, sz, src );
     fclose( src );
 
-    const auto lz4szMax = tracy::LZ4_compressBound( sz );
+    const auto lz4szMax = LZ4_compressBound( sz );
     auto lz4data = new uint8_t[lz4szMax];
-    const auto lz4sz = tracy::LZ4_compress_HC( (const char*)data, (char*)lz4data, sz, lz4szMax, 6 );
+    const auto lz4sz = LZ4_compress_HC( (const char*)data, (char*)lz4data, sz, lz4szMax, 6 );
     delete[] data;
 
     FILE* hdr = fopen( ( std::string(destination) + ".hpp" ).c_str(), "wb" );
