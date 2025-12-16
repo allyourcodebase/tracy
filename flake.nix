@@ -27,7 +27,7 @@
             default = tracy;
             tracy = pkgs.stdenv.mkDerivation {
               name = "tracy";
-              version = "0.12.2";
+              version = "0.13.0";
               meta.mainProgram = "tracy-profiler";
               src = fs.toSource {
                 root = ./.;
