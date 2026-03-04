@@ -23,7 +23,7 @@ zig build run
 
 When building for Windows or macOS, no system dependencies are required.
 
-The graphical profiler has the following dependencies on linux:
+The graphical profiler has the following dependencies on Linux and FreeBSD:
 
 - `libGL`, `libGLX`: runtime dependency
 - `libEGL`: runtime dependency, not required when using `-Dlegacy`
@@ -55,4 +55,11 @@ This will produce a dynamically linked executable that will try to `dlopen` vari
 ```bash
 zig build -Dtarget=x86_64-linux-gnu -Dlinkage=dynamic -Dno-fileselector -fno-sys=libxkbcommon -Dxkb-config-root=/usr/share/X11/xkb -Dx-locale-root=/usr/share/X11/locale
 zig build -Dtarget=x86_64-linux-gnu -Dlinkage=dynamic -Dno-fileselector -Dlegacy
+```
+
+#### FreeBSD
+
+```bash
+zig build -Dtarget=x86_64-freebsd -Dno-fileselector -fno-sys=libxkbcommon -Dxkb-config-root=/usr/local/share/X11/xkb -Dx-locale-root=/usr/local/lib/X11/locale
+zig build -Dtarget=x86_64-freebsd -Dno-fileselector -Dlegacy
 ```

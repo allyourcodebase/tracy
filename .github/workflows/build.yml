@@ -32,6 +32,12 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: zig build -Dno-fileselector
 
+      - name: Build (cross-compile freebsd)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          zig build -Dtarget=native-freebsd -Dno-fileselector -fno-sys=libxkbcommon -Dxkb-config-root=/usr/local/share/X11/xkb -Dx-locale-root=/usr/local/lib/X11/locale
+          zig build -Dtarget=native-freebsd -Dno-fileselector -Dlegacy
+
       - name: Build (windows)
         if: matrix.os == 'windows-latest'
         run: zig build -Doptimize=ReleaseFast

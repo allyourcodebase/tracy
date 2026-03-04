@@ -125,12 +125,15 @@ pub fn build(b: *std.Build) !void {
     // Profiler / Server Options
     const no_fileselector = b.option(bool, "no-fileselector", "Disable the file selector") orelse false;
     const portal = b.option(bool, "portal", "Use xdg-desktop-portal instead of GTK") orelse true; // upstream uses gtk as the default
-    const legacy = b.option(bool, "legacy", "Instead of Wayland, use the legacy X11 backend on Linux") orelse false;
+    const legacy = b.option(bool, "legacy", "Instead of Wayland, use the legacy X11 backend on Linux or FreeBSD") orelse false;
     const no_statistics = b.option(bool, "no-statistics", "Disable calculation of statistics") orelse false;
     const self_profile = b.option(bool, "self-profile", "Enable self-profiling") orelse false;
     const no_parallel_stl = b.option(bool, "no-parallel-stl", "Disable parallel STL") orelse true;
 
-    const use_wayland = target.result.os.tag == .linux and !legacy;
+    const use_wayland = !legacy and switch (target.result.os.tag) {
+        .linux, .freebsd => true,
+        else => false,
+    };
 
     const ini = createIni(b, common_module_options);
     const base64 = createBase64(b, common_module_options);

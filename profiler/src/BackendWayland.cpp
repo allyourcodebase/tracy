@@ -7,7 +7,6 @@
 #include "imgui/imgui_impl_opengl3.h"
 
 #include <chrono>
-#include <linux/input-event-codes.h>
 #include <memory>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,6 +36,14 @@
 #include "Backend.hpp"
 #include "RunQueue.hpp"
 #include "profiler/TracyConfig.hpp"
+
+#ifdef __linux__
+#include <linux/input-event-codes.h>
+#endif
+
+#ifdef __FreeBSD__
+#include <dev/evdev/input-event-codes.h>
+#endif
 
 constexpr ImGuiKey s_keyTable[] = {
     /*   0 */ ImGuiKey_None,
