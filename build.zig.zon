@@ -15,8 +15,8 @@
             .lazy = true,
         },
         .curl = .{ // curl ported to the zig build system
-            .url = "git+https://github.com/allyourcodebase/curl.git#0180cf1de923f479633b0d7a13aee4ad482b3ead",
-            .hash = "curl-8.15.0-mFDAWPDvAACDblXwmIxaAM-mCWYYk8JgfWpuKFQ9pKAT",
+            .url = "git+https://github.com/allyourcodebase/curl.git#fc863d6cbc4a694ff5bb11fc59470142c8682e2b",
+            .hash = "curl-8.18.0-mFDAWK_0AABsv8MPtSIjAPCVElXbt1vbzgBOs7plIlUJ",
             .lazy = true,
         },
         .zstd = .{ // zstd ported to the zig build system
@@ -40,8 +40,8 @@
         //     .lazy = true,
         // },
         .wayland = .{
-            .url = "git+https://github.com/allyourcodebase/wayland.git?ref=1.24.0-2#209cdc0d604facd02f67a93a145188d10a54f1ce",
-            .hash = "wayland-1.24.0-2-dxEBa4RlAAABLcAFSA_vUHi0KqowweDZzkcOQ8KNG4N7",
+            .url = "git+https://github.com/allyourcodebase/wayland.git?ref=1.24.0-3#c3e9e7b92a135badb24643da7be8a441a060af9d",
+            .hash = "wayland-1.24.0-3-dxEBa6N9AAD5fW7Hq-V8ngPRpUTky6PmnHxVFRPvn1aI",
             .lazy = true,
         },
         .wayland_protocols = .{
