@@ -168,7 +168,7 @@ pub fn build(b: *std.Build) !void {
     })) |dependency| dependency.artifact("nfd") else null;
 
     const tracy_server = b.addLibrary(.{
-        .linkage = linkage,
+        .linkage = .static,
         .name = "tracy-server",
         .root_module = b.createModule(.{
             .target = target,
