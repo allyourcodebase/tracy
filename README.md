@@ -25,8 +25,10 @@ When building for Windows or macOS, no system dependencies are required.
 
 The graphical profiler has the following dependencies on linux:
 
-- `libGL`: runtime dependency
+- `libGL`, `libGLX`: runtime dependency
 - `libEGL`: runtime dependency, not required when using `-Dlegacy`
+- `libwayland-*` runtime dependencies to run a native wayland session
+- `libX*` runtime dependencies to run a X11 session, only required when using `-Dlegacy`
 - `libxkbcommon`: not required when using `-Dlegacy`
 - `libdbus-1`: can be disabled with `-Dno-fileselector` or `-Dportal=false`
 - `libgtk+-3.0`: only required when using `-Dportal=false`
@@ -48,8 +50,9 @@ zig build run -Dtarget=x86_64-windows -fwine # run the tracy profiler with Wine
 
 #### Linux
 
-Cross compiling to macOS can successfully produce a binary. The binary has a runtime dependency on `libGL` and will fail if it can't be found with `dlopen`.
+This will produce a dynamically linked executable that will try to `dlopen` various runtime libraries. This is not guaranteed to work as all distros like NixOS.
 
 ```bash
-zig build -Dtarget=x86_64-linux -Dno-fileselector -Dlegacy
+zig build -Dtarget=x86_64-linux-gnu -Dlinkage=dynamic -Dno-fileselector -fno-sys=libxkbcommon -Dxkb-config-root=/usr/share/X11/xkb -Dx-locale-root=/usr/share/X11/locale
+zig build -Dtarget=x86_64-linux-gnu -Dlinkage=dynamic -Dno-fileselector -Dlegacy
 ```
