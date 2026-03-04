@@ -4,9 +4,9 @@
     .fingerprint = 0x255a89eecd27f4ce, // Changing this has security and trust implications.
     .minimum_zig_version = "0.15.1",
     .dependencies = .{
-        .glfw = .{ // A fork of GLFW packaged for the Zig build system
-            .url = "git+https://github.com/terraquad/glfw.git#00a723504e6451d8210031ec7940f2a6841cc0a6",
-            .hash = "glfw_c-3.4.0-_9LYGLaqGQAI0baWDUTJHNdld2y6gKrsbLvOwUse4Q6x",
+        .glfw = .{ // glfw ported to the zig build system
+            .url = "git+https://github.com/Techatrix/glfw.git#5ab24844c4982f1665985bd2a808a62c8cbeb97b",
+            .hash = "glfw-3.4.0-yvF4PIFDMwBvlU52tuJU9_ijSCazcLeWvYsdaBJm7HQ6",
             .lazy = true,
         },
         .capstone = .{ // Availability for capstone as Zig dependency
