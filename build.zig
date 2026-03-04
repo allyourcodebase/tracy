@@ -137,7 +137,7 @@ pub fn build(b: *std.Build) !void {
     const md4c = createMd4c(b, common_module_options);
     const pugixml = createPugixml(b, common_module_options);
     const tidy = createTidyHtml5(b, common_module_options);
-    const imgui = createImgui(b, common_module_options, legacy, link_system_glfw, link_system_freetype);
+    const imgui = createImgui(b, common_module_options, use_wayland, link_system_glfw, link_system_freetype);
     const zstd = if (link_system_zstd) null else if (b.lazyDependency("zstd", .{
         .target = target,
         .optimize = optimize,
@@ -452,8 +452,8 @@ pub fn build(b: *std.Build) !void {
                 .optimize = optimize,
                 .@"xkb-config-root" = xkb_config_root,
                 .@"x-locale-root" = x_locale_root,
-            })) |wayland| {
-                tracy_profiler.root_module.linkLibrary(wayland.artifact("xkbcommon"));
+            })) |libxkbcommon| {
+                tracy_profiler.root_module.linkLibrary(libxkbcommon.artifact("xkbcommon"));
             }
         }
 
@@ -554,8 +554,7 @@ pub fn build(b: *std.Build) !void {
             if (b.lazyDependency("glfw", .{
                 .target = target,
                 .optimize = optimize,
-                .x11 = if (target.result.os.tag == .linux) legacy else true,
-                .wayland = true,
+                .wayland = false,
             })) |glfw_dependency| {
                 tracy_profiler.root_module.linkLibrary(glfw_dependency.artifact("glfw"));
             }
@@ -901,7 +900,7 @@ fn createRpcmalloc(b: *std.Build, options: std.Build.Module.CreateOptions) *std.
 fn createImgui(
     b: *std.Build,
     options: std.Build.Module.CreateOptions,
-    legacy: bool,
+    use_wayland: bool,
     link_system_glfw: bool,
     link_system_freetype: bool,
 ) *std.Build.Step.Compile {
@@ -931,26 +930,22 @@ fn createImgui(
             "imgui_widgets.cpp",
         },
     });
-    if (link_system_glfw) {
-        imgui.root_module.linkSystemLibrary("glfw3", .{});
-    } else {
-        if (b.lazyDependency("glfw", .{
-            .target = options.target.?,
-            .optimize = options.optimize.?,
-            .x11 = if (options.target.?.result.os.tag == .linux) legacy else true,
-            .wayland = true,
-        })) |glfw_dependency| {
-            imgui.root_module.linkLibrary(glfw_dependency.artifact("glfw"));
+    if (!use_wayland) {
+        imgui.root_module.addCSourceFile(.{ .file = upstream.path("backends/imgui_impl_glfw.cpp") });
+        if (link_system_glfw) {
+            imgui.root_module.linkSystemLibrary("glfw3", .{});
+        } else {
+            if (b.lazyDependency("glfw", .{
+                .target = options.target.?,
+                .optimize = options.optimize.?,
+                .wayland = false,
+            })) |glfw_dependency| {
+                imgui.root_module.linkLibrary(glfw_dependency.artifact("glfw"));
+            }
         }
     }
 
-    imgui.root_module.addCSourceFiles(.{
-        .root = upstream.path("backends"),
-        .files = &.{
-            "imgui_impl_glfw.cpp",
-            "imgui_impl_opengl3.cpp",
-        },
-    });
+    imgui.root_module.addCSourceFile(.{ .file = upstream.path("backends/imgui_impl_opengl3.cpp") });
     imgui.installHeadersDirectory(upstream.path("backends"), "imgui", .{});
     imgui.root_module.addCMacro("GLFW_INCLUDE_NONE", "1");
     if (imgui.root_module.optimize != .Debug) {
