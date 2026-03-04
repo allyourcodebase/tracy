@@ -4,6 +4,7 @@
 #  include <intrin.h>
 #  include <stdint.h>
 
+#if defined(__x86_64__) || defined(__i386__)
 static inline void CpuId( uint32_t* regs, uint32_t leaf )
 {
     memset(regs, 0, sizeof(uint32_t) * 4);
@@ -13,6 +14,7 @@ static inline void CpuId( uint32_t* regs, uint32_t leaf )
     __get_cpuid( leaf, regs, regs+1, regs+2, regs+3 );
 #endif
 }
+#endif
 
 namespace tracy
 {
@@ -24,6 +26,7 @@ int main( int argc, char** argv );
 
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd, int nCmd )
 {
+    #if defined(__x86_64__) || defined(__i386__)
     {
         uint32_t regs[4];
         CpuId( regs, 0 );
@@ -52,6 +55,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd,
             return 0;
         }
     }
+    #endif
 
     return main( __argc, __argv );
 }
