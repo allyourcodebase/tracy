@@ -50,7 +50,7 @@
               };
               dontConfigure = true;
               buildInputs = with pkgs;
-                [glfw curl zstd lz4 gtk3 dbus]
+                [curl zstd lz4 gtk3 dbus]
                 ++ lib.optionals (stdenv.hostPlatform.isLinux) [libxkbcommon];
               nativeBuildInputs = with pkgs;
                 [zig_hook pkg-config makeWrapper]
