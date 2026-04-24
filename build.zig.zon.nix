@@ -5,11 +5,11 @@
 }:
 linkFarm "zig-packages" [
   {
-    name = "capstone-6.0.0-Alpha4-tmNUgdI8AADDVL-qUUVmU0IGuFGpjz6-O7sBRjeB53yb";
+    name = "capstone-6.0.0-Alpha4-tmNUgQE9AABNw_9iAfvi1hPfRVFKQsw2bqWVXOeM7Kqz";
     path = fetchgit {
       url = "https://github.com/allyourcodebase/capstone";
-      rev = "90c3e2512286b077631da5361708562e333ae856";
-      hash = "sha256-jqYbCviAAmW8XL45zpTKYKrupsa315KP0DGxVSgtqxE=";
+      rev = "586dd00c4fd1615f4af7e603376dd13b683a25aa";
+      hash = "sha256-erARsyTMq2JN2BYUnsPf8jrH9UHD4afzvTmkmQcRZmY=";
     };
   }
   {

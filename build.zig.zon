@@ -2,26 +2,26 @@
     .name = .tracy,
     .version = "0.13.1",
     .fingerprint = 0x255a89eecd27f4ce, // Changing this has security and trust implications.
-    .minimum_zig_version = "0.15.1",
+    .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .glfw = .{ // glfw ported to the zig build system
-            .url = "git+https://github.com/Techatrix/glfw.git#5ab24844c4982f1665985bd2a808a62c8cbeb97b",
-            .hash = "glfw-3.4.0-yvF4PIFDMwBvlU52tuJU9_ijSCazcLeWvYsdaBJm7HQ6",
+            .url = "git+https://github.com/Techatrix/glfw.git#17493bf1da7b77c7554b577917ce2a2febf265a2",
+            .hash = "glfw-3.4.0-yvF4PGJSLwB4PwLFVcTxcixsw57WFurDn9CON4cIbf-H",
             .lazy = true,
         },
         .capstone = .{ // Availability for capstone as Zig dependency
-            .url = "git+https://github.com/allyourcodebase/capstone.git#90c3e2512286b077631da5361708562e333ae856",
-            .hash = "capstone-6.0.0-Alpha4-tmNUgdI8AADDVL-qUUVmU0IGuFGpjz6-O7sBRjeB53yb",
+            .url = "git+https://github.com/allyourcodebase/capstone.git#586dd00c4fd1615f4af7e603376dd13b683a25aa",
+            .hash = "capstone-6.0.0-Alpha4-tmNUgQE9AABNw_9iAfvi1hPfRVFKQsw2bqWVXOeM7Kqz",
             .lazy = true,
         },
         .curl = .{ // curl ported to the zig build system
-            .url = "git+https://github.com/allyourcodebase/curl.git#fc863d6cbc4a694ff5bb11fc59470142c8682e2b",
-            .hash = "curl-8.18.0-mFDAWK_0AABsv8MPtSIjAPCVElXbt1vbzgBOs7plIlUJ",
+            .url = "git+https://github.com/allyourcodebase/curl.git#ab30a38bc47c8ad83ec7016f4ae3af1958d76ac3",
+            .hash = "curl-8.18.0-mFDAWOf0AAAE2R408-AD3oi63paK_MBWcxkqR6zkNsmL",
             .lazy = true,
         },
         .zstd = .{ // zstd ported to the zig build system
-            .url = "git+https://github.com/allyourcodebase/zstd.git?ref=1.5.7#01327d49cbc56dc24c20a167bb0055d7fc23de84",
-            .hash = "zstd-1.5.7-KEItkJ8vAAC5_rRlKmLflYQ-eKXbAIQBWZNmmJtS18q0",
+            .url = "git+https://github.com/allyourcodebase/zstd.git?ref=1.5.7-1#e1a501be57f42c541e8a5597e4b59a074dfd09a3",
+            .hash = "zstd-1.5.7-1-KEItkAMwAAD6OKY3m0OOmXG7aL-aLUfrDqbP5J5oYapU",
             .lazy = true,
         },
         .lz4 = .{ // lz4 ported to the zig build system
@@ -34,14 +34,14 @@
             .hash = "nativefiledialog_extended-1.2.1-2-_pDry5gcAAA701XtymPdScWmrLQ5Zuw9yZYm_bxp7DkQ",
             .lazy = true,
         },
-        // .freetype = .{ // A fork of freetype packaged for the Zig build system
-        //     .url = "git+https://github.com/hexops/freetype.git#972cd37bccecae2cc9f54cf0b562263a13209d02",
-        //     .hash = "freetype-0.0.0-AAAAAA5JcwBMujojfNLEq5g_WijZtU56mRLYx8bjjiMU",
-        //     .lazy = true,
-        // },
+        .freetype = .{
+            .url = "git+https://code.hexops.org/hexops/freetype.git#c4188e125fd4e8c84d49b619f4f409fde52ff1d0",
+            .hash = "freetype-0.0.0-Oa073aKZdgBGGFCSwR0IWkb5oV2rgBGAHeTnXIejmo0k",
+            .lazy = true,
+        },
         .wayland = .{
-            .url = "git+https://github.com/allyourcodebase/wayland.git?ref=1.24.0-3#c3e9e7b92a135badb24643da7be8a441a060af9d",
-            .hash = "wayland-1.24.0-3-dxEBa6N9AAD5fW7Hq-V8ngPRpUTky6PmnHxVFRPvn1aI",
+            .url = "git+https://github.com/allyourcodebase/wayland.git?ref=1.24.0-4#1a08737f01842c2c11fd2d22bec795ffcd7fec67",
+            .hash = "wayland-1.24.0-4-dxEBa-N8AABxP_wW0QMcnzmY_h_P1sqtpY9tenhmLz10",
             .lazy = true,
         },
         .wayland_protocols = .{
@@ -50,8 +50,8 @@
             .lazy = true,
         },
         .libxkbcommon = .{
-            .url = "git+https://github.com/allyourcodebase/libxkbcommon.git?ref=1.11.0-1#809157d5118909298f3e086fa8d8103198e938fd",
-            .hash = "libxkbcommon-1.11.0-1-93LaF6pwAgDFoaLfOkR8ioG4RVcDHbBhsDmC_rYwyOEG",
+            .url = "git+https://github.com/allyourcodebase/libxkbcommon.git?ref=1.13.1#8c31126430bec39d2cb5f06aa3c2667e006b32ea",
+            .hash = "libxkbcommon-1.13.1-93LaF2x7AgDgSrr8xjRYrYGhtGhJKcZMuID3M95APvl1",
             .lazy = true,
         },
 
