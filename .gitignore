@@ -13,4 +13,5 @@ manual/t*.fls
 compile_commands.json
 .zig-cache
 zig-out
+zig-pkg
 result

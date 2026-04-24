@@ -17,7 +17,7 @@
         system: let
           pkgs = nixpkgs.legacyPackages.${system};
           deps = pkgs.callPackage ./build.zig.zon.nix {};
-          zig_hook = pkgs.zig_0_15.hook.overrideAttrs {
+          zig_hook = pkgs.zig_0_16.hook.overrideAttrs {
             zig_default_flags = "-Doptimize=ReleaseFast -Dcpu=baseline --color off";
           };
           fs = pkgs.lib.fileset;
@@ -48,9 +48,8 @@
                   ]
                 );
               };
-              dontConfigure = true;
               buildInputs = with pkgs;
-                [curl zstd lz4 gtk3 dbus]
+                [curl zstd lz4 freetype gtk3 dbus]
                 ++ lib.optionals (stdenv.hostPlatform.isLinux) [libxkbcommon];
               nativeBuildInputs = with pkgs;
                 [zig_hook pkg-config makeWrapper]
@@ -66,7 +65,7 @@
             buildInputs = with pkgs;
               [gtk3 dbus]
               ++ lib.optionals (stdenv.hostPlatform.isLinux) [libxkbcommon];
-            nativeBuildInputs = with pkgs; [zig_hook pkg-config];
+            nativeBuildInputs = with pkgs; [zig_0_16 pkg-config];
             # shellHook = ''
             #   export XKB_CONFIG_ROOT=${pkgs.xkeyboard_config}/etc/X11/xkb
             #   export XLOCALEDIR=${pkgs.xorg.libX11.out}/share/X11/locale

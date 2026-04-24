@@ -392,7 +392,7 @@ pub fn build(b: *std.Build) !void {
     })) |dependency| {
         embed_exe.root_module.linkLibrary(dependency.artifact("lz4"));
     }
-    embed_exe.addCSourceFile(.{
+    embed_exe.root_module.addCSourceFile(.{
         .file = b.path("profiler/helpers/embed.cpp"),
         .flags = &.{"-std=c++20"},
     });
@@ -489,10 +489,10 @@ pub fn build(b: *std.Build) !void {
         const wayland_protocols_dir: ?std.Build.LazyPath = if (use_system_wayland_protocols) blk: {
             var code: u8 = undefined;
             const pkgdatadir = if (b.runAllowFail(&[_][]const u8{
-                b.graph.env_map.get("PKG_CONFIG") orelse "pkg-config",
+                b.graph.environ_map.get("PKG_CONFIG") orelse "pkg-config",
                 "wayland-protocols",
                 "--variable=pkgdatadir",
-            }, &code, .Ignore)) |stdout| stdout else |err| switch (err) {
+            }, &code, .ignore)) |stdout| stdout else |err| switch (err) {
                 error.ProcessTerminated => return error.PkgConfigCrashed,
                 error.ExecNotSupported => return error.PkgConfigFailed,
                 error.ExitCodeFailure => return error.PkgConfigFailed,
@@ -907,7 +907,7 @@ fn createImgui(
     link_system_glfw: bool,
     link_system_freetype: bool,
 ) *std.Build.Step.Compile {
-    const enable_freetype: bool = false;
+    const enable_freetype: bool = true;
 
     const upstream = b.dependency("imgui", .{});
     const imgui = b.addLibrary(.{
@@ -963,7 +963,6 @@ fn createImgui(
         } else if (b.lazyDependency("freetype", .{
             .target = options.target.?,
             .optimize = options.optimize.?,
-            .enable_brotli = false,
         })) |freetype_dependency| {
             imgui.root_module.linkLibrary(freetype_dependency.artifact("freetype"));
         }
