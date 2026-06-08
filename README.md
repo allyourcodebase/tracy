@@ -53,25 +53,31 @@ zig build run -Dtarget=x86_64-windows -fwine # run the tracy profiler with Wine
 This will produce a dynamically linked executable that will try to `dlopen` various runtime libraries. This is not guaranteed to work as all distros like NixOS.
 
 ```bash
+# Wayland
 zig build -Dtarget=x86_64-linux-gnu -Dlinkage=dynamic -Dno-fileselector -fno-sys=libxkbcommon -Dxkb-config-root=/usr/share/X11/xkb -Dx-locale-root=/usr/share/X11/locale
+# X11
 zig build -Dtarget=x86_64-linux-gnu -Dlinkage=dynamic -Dno-fileselector -Dlegacy
 ```
 
 #### FreeBSD
 
 ```bash
+# Wayland
 zig build -Dtarget=x86_64-freebsd -Dno-fileselector -fno-sys=libxkbcommon -Dxkb-config-root=/usr/local/share/X11/xkb -Dx-locale-root=/usr/local/lib/X11/locale
+# X11
 zig build -Dtarget=x86_64-freebsd -Dno-fileselector -Dlegacy
 ```
 
 #### NetBSD
 
 ```bash
+# X11
 zig build -Dtarget=x86_64-freebsd -Dno-fileselector
 ```
 
 #### OpenBSD
 
 ```bash
+# X11
 zig build -Dtarget=x86_64-freebsd -Dno-fileselector
 ```
