@@ -740,7 +740,7 @@ static const char* GetHostInfo()
     size_t sz = sizeof( memSize );
     sysctlbyname( "hw.memsize", &memSize, &sz, nullptr, 0 );
     ptr += sprintf( ptr, "RAM: %zu MB\n", memSize / 1024 / 1024 );
-#elif defined BSD
+#elif defined BSD and not defined __OpenBSD__
     size_t memSize;
     size_t sz = sizeof( memSize );
     sysctlbyname( "hw.physmem", &memSize, &sz, nullptr, 0 );

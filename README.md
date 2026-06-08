@@ -23,7 +23,7 @@ zig build run
 
 When building for Windows or macOS, no system dependencies are required.
 
-The graphical profiler has the following dependencies on Linux and FreeBSD:
+The graphical profiler has the following dependencies on Linux and BSD:
 
 - `libGL`, `libGLX`: runtime dependency
 - `libEGL`: runtime dependency, not required when using `-Dlegacy`
@@ -62,4 +62,16 @@ zig build -Dtarget=x86_64-linux-gnu -Dlinkage=dynamic -Dno-fileselector -Dlegacy
 ```bash
 zig build -Dtarget=x86_64-freebsd -Dno-fileselector -fno-sys=libxkbcommon -Dxkb-config-root=/usr/local/share/X11/xkb -Dx-locale-root=/usr/local/lib/X11/locale
 zig build -Dtarget=x86_64-freebsd -Dno-fileselector -Dlegacy
+```
+
+#### NetBSD
+
+```bash
+zig build -Dtarget=x86_64-freebsd -Dno-fileselector
+```
+
+#### OpenBSD
+
+```bash
+zig build -Dtarget=x86_64-freebsd -Dno-fileselector
 ```

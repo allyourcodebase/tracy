@@ -15,8 +15,8 @@
             .lazy = true,
         },
         .curl = .{ // curl ported to the zig build system
-            .url = "git+https://github.com/allyourcodebase/curl.git#ab30a38bc47c8ad83ec7016f4ae3af1958d76ac3",
-            .hash = "curl-8.18.0-mFDAWOf0AAAE2R408-AD3oi63paK_MBWcxkqR6zkNsmL",
+            .url = "git+https://github.com/allyourcodebase/curl.git#355dbb96054be680c3828f4212023feec9efa7d4",
+            .hash = "curl-8.18.0-mFDAWCj3AADnw4sQxSeECm9y7g5xOGc75DE2K0JkTs58",
             .lazy = true,
         },
         .zstd = .{ // zstd ported to the zig build system

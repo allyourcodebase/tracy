@@ -79,7 +79,7 @@ void SysTime::ReadTimes()
     idle = info.cpu_ticks[CPU_STATE_IDLE];
 }
 
-#  elif defined BSD
+#  elif defined BSD and not defined __OpenBSD__
 
 void SysTime::ReadTimes()
 {

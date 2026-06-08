@@ -20,7 +20,7 @@
 
 #ifdef __APPLE__
 #  define HAVE_MACH_O_DYLD_H 1
-#elif defined BSD
+#elif defined BSD and not defined __OpenBSD__
 #  define HAVE_KERN_PROC 1
 #  define HAVE_KERN_PROC_ARGS 1
 #endif

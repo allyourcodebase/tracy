@@ -7361,15 +7361,15 @@ struct phdr_data
 struct PhdrIterate
 {
   char* dlpi_name;
-  ElfW(Addr) dlpi_addr;
-  ElfW(Addr) dlpi_end_addr;
+  b_elf_addr dlpi_addr;
+  b_elf_addr dlpi_end_addr;
 };
 FastVector<PhdrIterate> s_phdrData(16);
 
 struct ElfAddrRange
 {
-  ElfW(Addr) dlpi_addr;
-  ElfW(Addr) dlpi_end_addr;
+  b_elf_addr dlpi_addr;
+  b_elf_addr dlpi_end_addr;
 };
 FastVector<ElfAddrRange> s_sortedKnownElfRanges(16);
 
