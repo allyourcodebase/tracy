@@ -25,7 +25,7 @@
 #include "stb_image.h"
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include "stb_image_resize.h"
+#include "deprecated/stb_image_resize.h"
 
 #include "../../public/common/TracyProtocol.hpp"
 #include "../../public/common/TracyVersion.hpp"
@@ -41,14 +41,16 @@
 #include "profiler/TracyView.hpp"
 #include "profiler/TracyWeb.hpp"
 #include "profiler/IconsFontAwesome7.h"
-#include "../../server/tracy_pdqsort.h"
-#include "../../server/tracy_robin_hood.h"
 #include "../../server/TracyFileHeader.hpp"
 #include "../../server/TracyFileRead.hpp"
 #include "../../server/TracyBroadcast.hpp"
 #include "../../server/TracyPrint.hpp"
 #include "../../server/TracySysUtil.hpp"
 #include "../../server/TracyWorker.hpp"
+
+#include "pdqsort.h"
+#include "robin_hood.h"
+using namespace robin_hood;
 
 #include "icon.hpp"
 #include "zigzag01.hpp"
@@ -86,7 +88,7 @@ struct ClientData
 
 enum class ViewShutdown { False, True, Join };
 
-static tracy::unordered_flat_map<uint64_t, ClientData> clients;
+static unordered_flat_map<uint64_t, ClientData> clients;
 static uint64_t clientOrder = 0;
 static std::atomic<std::shared_ptr<tracy::View>> view;
 static tracy::BadVersionState badVer;
@@ -96,7 +98,7 @@ static char title[128];
 static std::thread loadThread, updateThread, updateNotesThread;
 static std::unique_ptr<tracy::UdpListen> broadcastListen;
 static std::mutex resolvLock;
-static tracy::unordered_flat_map<std::string, std::string> resolvMap;
+static unordered_flat_map<std::string, std::string> resolvMap;
 static ResolvService resolv( port );
 static char addr[1024] = { "127.0.0.1" };
 static ConnectionHistory* connHist;
@@ -1027,7 +1029,7 @@ static void DrawContents()
             std::vector<const ClientData*> sorted;
             sorted.reserve( clients.size() );
             for( auto& v : clients ) sorted.emplace_back( &v.second );
-            tracy::pdqsort( sorted.begin(), sorted.end(), []( const ClientData* l, const ClientData* r ) { return l->order < r->order; } );
+            pdqsort( sorted.begin(), sorted.end(), []( const ClientData* l, const ClientData* r ) { return l->order < r->order; } );
             std::lock_guard<std::mutex> lock( resolvLock );
             for( auto v : sorted )
             {

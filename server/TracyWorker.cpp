@@ -4,7 +4,7 @@
 
 #ifdef _WIN32
 #  include <malloc.h>
-#elif defined __FreeBSD__
+#elif defined __FreeBSD__ || defined __NetBSD__ || defined __OpenBSD__ || defined __DragonFly__
 #  include <stdlib.h>
 #else
 #  include <alloca.h>
@@ -21,7 +21,7 @@
 #include <inttypes.h>
 #include <sys/stat.h>
 
-#include <capstone.h>
+#include <capstone/capstone.h>
 
 #define ZDICT_STATIC_LINKING_ONLY
 #include <zdict.h>
@@ -37,7 +37,7 @@
 #include "TracySort.hpp"
 #include "TracyTaskDispatch.hpp"
 #include "TracyWorker.hpp"
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 
 namespace tracy
 {

@@ -17,7 +17,7 @@
 #include "TracyUtility.hpp"
 #include "TracyView.hpp"
 #include "TracyWorker.hpp"
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 #include "../Fonts.hpp"
 
 #include "IconsFontAwesome7.h"

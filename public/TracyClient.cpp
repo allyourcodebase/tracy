@@ -19,7 +19,6 @@
 #  pragma warning(push, 0)
 #endif
 
-#include "common/tracy_lz4.cpp"
 #include "client/TracyProfiler.cpp"
 #include "client/TracyCallstack.cpp"
 #include "client/TracySysPower.cpp"
@@ -27,7 +26,7 @@
 #include "client/TracySysTrace.cpp"
 #include "common/TracySocket.cpp"
 #ifndef TRACY_HAS_CUSTOM_ALLOCATOR
-#include "client/tracy_rpmalloc.cpp"
+// #include "rpmalloc.c"
 #endif
 #include "client/TracyDxt1.cpp"
 #include "client/TracyAlloc.cpp"

@@ -79,13 +79,25 @@ void SysTime::ReadTimes()
     idle = info.cpu_ticks[CPU_STATE_IDLE];
 }
 
-#  elif defined __FreeBSD__ || defined __NetBSD__ || defined __OpenBSD__ || defined __DragonFly__
+#  elif defined __FreeBSD__ || defined __NetBSD__ || defined __DragonFly__
 
 void SysTime::ReadTimes()
 {
     u_long data[5];
     size_t sz = sizeof( data );
     sysctlbyname( "kern.cp_time", &data, &sz, nullptr, 0 );
+    used = data[0] + data[1] + data[2] + data[3];
+    idle = data[4];
+}
+
+#  elif defined __OpenBSD__
+
+void SysTime::ReadTimes()
+{
+    long data[5];
+    int mib[2] = { CTL_KERN, KERN_CPTIME };
+    size_t sz = sizeof( data );
+    sysctl( mib, 2, &sz, &sz, nullptr, 0 );
     used = data[0] + data[1] + data[2] + data[3];
     idle = data[4];
 }

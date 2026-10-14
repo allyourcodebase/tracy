@@ -4,7 +4,11 @@
 #include <limits.h>
 #include <stdint.h>
 
-#if defined __GNUC__ || defined __clang__
+#if defined _MSC_VER
+#  include <intrin.h>
+#  define TracyCountBits __popcnt64
+#  define TracyLzcnt __lzcnt64
+#elif defined __GNUC__ || defined __clang__
 static inline uint64_t TracyCountBits( uint64_t i )
 {
     return uint64_t( __builtin_popcountll( i ) );

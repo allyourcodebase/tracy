@@ -4,7 +4,7 @@
 #include "TracyNameGen.hpp"
 #include "TracyPrint.hpp"
 #include "TracyView.hpp"
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 #include "../public/common/TracyString.hpp"
 #include "../Fonts.hpp"
 

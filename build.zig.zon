@@ -1,0 +1,160 @@
+.{
+    .name = .tracy,
+    .version = "0.14.0",
+    .fingerprint = 0x255a89eecd27f4ce, // Changing this has security and trust implications.
+    .minimum_zig_version = "0.16.0",
+    .dependencies = .{
+        .glfw = .{ // glfw ported to the zig build system
+            .url = "git+https://github.com/Techatrix/glfw.git#17493bf1da7b77c7554b577917ce2a2febf265a2",
+            .hash = "glfw-3.4.0-yvF4PGJSLwB4PwLFVcTxcixsw57WFurDn9CON4cIbf-H",
+            .lazy = true,
+        },
+        .capstone = .{ // Availability for capstone as Zig dependency
+            .url = "git+https://github.com/allyourcodebase/capstone.git#3769b1ec041b7c38813b9f7780946dc4dda3723e",
+            .hash = "capstone-6.0.0-Alpha11-tmNUgchCAADseBl0X3r-1OeBGnnCh81Mzef9IVsyDBZ6",
+            .lazy = true,
+        },
+        .curl = .{ // curl ported to the zig build system
+            .url = "git+https://github.com/allyourcodebase/curl.git#c59c65cd767951abfe9ac0b1e075e64733953361",
+            .hash = "curl-8.18.0-mFDAWPf7AACO9V1eofR62eABcrB1QQtT1a-DN5XumC53",
+            .lazy = true,
+        },
+        .zstd = .{ // zstd ported to the zig build system
+            .url = "git+https://github.com/allyourcodebase/zstd.git?ref=1.5.7-1#e1a501be57f42c541e8a5597e4b59a074dfd09a3",
+            .hash = "zstd-1.5.7-1-KEItkAMwAAD6OKY3m0OOmXG7aL-aLUfrDqbP5J5oYapU",
+            .lazy = true,
+        },
+        .lz4 = .{ // lz4 ported to the zig build system
+            .url = "git+https://github.com/allyourcodebase/lz4.git?ref=1.10.0-6#41f52ab227caf9d48cf88c89a4d2946caa12b102",
+            .hash = "lz4-1.10.0-6-ewyzw-4NAAAWDpY4xpiqr4LQhZQAC0x_rGnW2iPh6jk2",
+            .lazy = true,
+        },
+        .nativefiledialog_extended = .{ // nativefiledialog-extended ported to the zig build system
+            .url = "git+https://github.com/allyourcodebase/nativefiledialog-extended.git#3ac41848ceec6b08fd6cd8ae5338a6ac854ec327",
+            .hash = "nativefiledialog_extended-1.3.0-dev-_pDry8IdAAAWgvctTyivfRJ99NgTXUTw3YQL9h9gosOS",
+            .lazy = true,
+        },
+        .freetype = .{ // freetype ported to the zig build system
+            .url = "git+https://github.com/techatrix/allyourcodebase-freetype.git?ref=rewrite#f2e5275ea162ffe931aa7c6535a8ecd28e4989ca",
+            .hash = "freetype-2.14.3-C3-WdfVMAAC5IK_-crO7t3QdQIlduSky3Bt4PIaPE7XJ",
+            .lazy = true,
+        },
+        .wayland = .{
+            .url = "git+https://github.com/allyourcodebase/wayland.git#eb8e7309abf20149f6bb1f5854e754da3f5e09c2",
+            .hash = "wayland-1.26.0-dxEBa5-HAADfF-7jd2Mr595CnAEDteEM2YfMrkV0HVHb",
+            .lazy = true,
+        },
+        .wayland_protocols = .{
+            .url = "git+https://gitlab.freedesktop.org/wayland/wayland-protocols.git?ref=1.47#88223018d1b578d0d8869866da66d9608e05f928",
+            .hash = "N-V-__8AAFdWDwA0ktbNUi9pFBHCRN4weXIgIfCrVjfGxqgA",
+            .lazy = true,
+        },
+        .libxkbcommon = .{
+            .url = "git+https://github.com/allyourcodebase/libxkbcommon.git?ref=1.13.2#466931e7f89f06ab7a685a336b2f4a69f9b89e25",
+            .hash = "libxkbcommon-1.13.2-93LaF2h7AgBIG6oyBvFuUyyiC8Puj0v5OGLE4a5r5ZWl",
+            .lazy = true,
+        },
+
+        // C/C++ dependencies without a Zig build script
+
+        .ini = .{ // A tiny ANSI C library for loading .ini config files
+            .url = "git+https://github.com/rxi/ini.git#13a254c9e38def8924a83badfea5eda5a01b9295",
+            .hash = "N-V-__8AALwkAAB_H_lRcdLYz-_DCoAy71ze0CtKLsHdDRD-",
+        },
+        .rpmalloc = .{ // Public domain cross platform lock free thread caching 16-byte aligned memory allocator implemented in C
+            .url = "git+https://github.com/mjansson/rpmalloc.git?ref=1.4.5#e4393ff85585d91400bcbad2e7266c011075b673",
+            .hash = "N-V-__8AAEi9BgBKV3vzD6pzRAbfs1f7lNp1wsrArxR79lx6",
+        },
+        .imgui = .{ // Dear ImGui: Bloat-free Graphical User interface
+            .url = "git+https://github.com/ocornut/imgui.git?ref=v1.92.9b-docking#b48d1afbe8ee8b238e2961dc363a949dd7304e23",
+            .hash = "N-V-__8AAMiwhADTFf225fEZAyMZ0m0uy3MKKpZbqgX5260R",
+            // TODO imgui-emscripten.patch
+            // TODO imgui-loader.patch
+            // TODO imgui-no-samplers.patch
+            // TODO imgui-no-default-font.patch
+            // TODO imgui-macos-clipboard.patch
+        },
+        .base64 = .{ // Fast Base64 stream encoder/decoder in C99, with SIMD acceleration
+            .url = "git+https://github.com/aklomp/base64.git?ref=v0.5.2#8bdda2d47caf8b066999c5bd01069e55bcd0d396",
+            .hash = "N-V-__8AAOcwBQBzPPchGzrzVG8hpgzRHXrUD-F_BDqCmAL3",
+        },
+        .md4c = .{ // C Markdown parser
+            .url = "git+https://github.com/mity/md4c.git#65c6c9d72cebd9a731aaa5597414ce04d9ea5de3",
+            .hash = "N-V-__8AAE7AEQBTD7426nSgryAEYEI64cHsD0WDKhNIfh6I",
+            // keep version in sync with `createMd4c`
+        },
+        .pugixml = .{ // Light-weight, simple and fast XML parser for C++ with XPath support
+            .url = "git+https://github.com/zeux/pugixml.git?ref=v1.16#c8033ce9d039e7f9d134877c363397b3cfe20816",
+            .hash = "N-V-__8AAKOnKgCQ7Y0anxq1QC7BFhDSS2jHMk0yhGTeV2gh",
+        },
+        .@"tidy-html5" = .{ // The granddaddy of HTML tools, with support for modern standards
+            .url = "git+https://github.com/htacg/tidy-html5.git?ref=5.8.0#1ca37471b48a3498f985509828cb3cf85ea129f8",
+            .hash = "N-V-__8AAJPHSwBnLvtcY57RjGXHa9KuzDD5_55eeK9sC-F7",
+            // keep version in sync with `createTidyHtml5`
+        },
+
+        // C/C++ header-only dependencies
+
+        .getopt_port = .{ // BSD-licensed getopt implementation
+            .url = "git+https://github.com/kimgr/getopt_port.git#9d3d387087d252970923db7f297f681622c4e026",
+            .hash = "N-V-__8AAJKtAACXam4qGbql--FmlkH5sGRDUY6n_tqMfZW-",
+        },
+        .stb = .{ // single-file public domain libraries
+            .url = "git+https://github.com/nothings/stb.git#ae721c50eaf761660b4f90cc590453cdb0c2acd0",
+            .hash = "N-V-__8AADb7TQBhnAapR8-szphSk_8WmU22BY8jadPC_8-d",
+        },
+        .dtl = .{ // diff template library
+            .url = "git+https://github.com/cubicdaiya/dtl.git?ref=v1.21#32567bb9ec704f09040fb1ed7431a3d967e3df03",
+            .hash = "N-V-__8AAKQTAgC4IUwwDQSA3kMErF_02NAb-DgnNFymn_wr",
+        },
+        .nlohmann_json = .{ // JSON for Modern C++
+            .url = "git+https://github.com/nlohmann/json.git?ref=v3.12.0#55f93686c01528224f448c19128836e7df245f72",
+            .hash = "N-V-__8AANqC8wBtv10C_41rBAgWfTMpQow7tzRi4h6LQYxm",
+        },
+        .pdqsort = .{ // Pattern-defeating quicksort.
+            .url = "git+https://github.com/orlp/pdqsort.git#b1ef26a55cdb60d236a5cb199c4234c704f46726",
+            .hash = "N-V-__8AAJ7xAABXU9I52yQSQ-zeeJEohtrHKj9ekUVZdlOR",
+        },
+        .ppqsort = .{ // PPQSort - Parallel Pattern Quicksort.
+            .url = "git+https://github.com/GabTux/PPQSort.git?ref=v1.0.6#21c5a20ca3daf572caaf0a8522db32e27e28fa1d",
+            .hash = "N-V-__8AAMg1AwAb5xteW1m8awWZwyssFBccTNB5WjAr2A9R", // TODO ppqsort-nodebug.patch ppqsort-semaphore.patch
+        },
+        // THIS PROJECT HAS BEEN ARCHIVED
+        .robin_hood_hashing = .{ // Fast & memory efficient hashtable based on robin hood hashing
+            .url = "git+https://github.com/martinus/robin-hood-hashing.git#7697343363af4cc3f42cab17be49e6af9ab181e2",
+            .hash = "N-V-__8AAMC4CwDqHbQUv2a4lEr_UXtrXeW5CWU6X3mzDLo6",
+        },
+        .xxHash = .{ // Extremely fast non-cryptographic hash algorithm
+            .url = "git+https://github.com/Cyan4973/xxHash.git#a57f6cce2698049863af8c25787084ae0489d849",
+            .hash = "N-V-__8AAGS5UgB9tuEDsjOj_PBuqhvifei8hQNtCQwmN6g4",
+        },
+        .usearch = .{ // Fast Open-Source Search & Clustering engine
+            .url = "git+https://github.com/unum-cloud/usearch.git?ref=v2.26.0#cc23bbaf21ef52313c5a495adbc40cbd733cdcfb",
+            .hash = "N-V-__8AAKfAIADXrLp1KiOk6buhip0Z3uwW_uCBwir9ytK0",
+        },
+        .f16 = .{ // Conversion to/from half-precision floating point formats
+            .url = "git+https://github.com/Maratyszcza/FP16.git#3d2de1816307bac63c16a297e8c4dc501b4076df",
+            .hash = "N-V-__8AAH8TBgB7tfUQiFJqV8veMMRCP4aM2xjP62YHbA7U",
+        },
+    },
+    .paths = .{
+        "capture",
+        "csvexport",
+        "icon",
+        "import",
+        "include",
+        "manual/tracy.md",
+        "merge",
+        "monitor",
+        "profiler",
+        "public",
+        "server",
+        "tests/tracy",
+        "update",
+
+        "build.zig",
+        "build.zig.zon",
+        "LICENSE",
+        "README.md",
+    },
+}

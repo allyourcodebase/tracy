@@ -2,7 +2,7 @@
 #include "TracyView.hpp"
 #include "../Fonts.hpp"
 
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 
 namespace tracy
 {

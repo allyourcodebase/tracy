@@ -2,7 +2,7 @@
 #include "TracyFileWrite.hpp"
 #include "TracyPrint.hpp"
 #include "TracyWorker.hpp"
-#include "../../getopt/getopt.h"
+#include "getopt.h"
 #include "../../public/common/TracyVersion.hpp"
 #include "GitRef.hpp"
 

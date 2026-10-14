@@ -17,7 +17,6 @@
 #include "../public/common/TracyQueue.hpp"
 #include "../public/common/TracyProtocol.hpp"
 #include "../public/common/TracySocket.hpp"
-#include "tracy_robin_hood.h"
 #include "TracyEvent.hpp"
 #include "TracyShortPtr.hpp"
 #include "TracySlab.hpp"
@@ -25,7 +24,8 @@
 #include "TracyTextureCompression.hpp"
 #include "TracyThreadCompress.hpp"
 #include "TracyVarArray.hpp"
-
+#include "robin_hood.h"
+using namespace robin_hood;
 
 namespace tracy
 {

@@ -27,7 +27,7 @@ public:
     bool Save( const char* file, uint64_t hash ) const;
 
 private:
-    unum::usearch::index_dense_t m_index;
+    unum::usearch::index_dense_gt<size_t> m_index;
     std::vector<uint32_t> m_data;
 };
 

@@ -2,10 +2,11 @@
 #define __TRACYSTRINGDISCOVERY_HPP__
 
 #include "../public/common/TracyForceInline.hpp"
-#include "tracy_robin_hood.h"
 #include "TracyCharUtil.hpp"
 #include "TracyEvent.hpp"
 #include "TracyVector.hpp"
+#include "robin_hood.h"
+using namespace robin_hood;
 
 namespace tracy
 {

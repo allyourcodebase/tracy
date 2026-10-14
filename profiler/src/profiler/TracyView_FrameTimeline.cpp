@@ -8,7 +8,7 @@
 #include "TracyTexture.hpp"
 #include "TracyView.hpp"
 
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 
 namespace tracy
 {

@@ -6,9 +6,11 @@
 #include <string>
 #include <vector>
 
-#include "tracy_robin_hood.h"
 #include "TracyProtocol.hpp"
 #include "TracySourceTokenizer.hpp"
+
+#include "robin_hood.h"
+using namespace robin_hood;
 
 namespace tracy
 {

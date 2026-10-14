@@ -13,7 +13,7 @@ namespace tracy
 TracyLlmEmbeddings::TracyLlmEmbeddings( size_t length, size_t reserve )
 {
     unum::usearch::metric_punned_t metric( length );
-    m_index = unum::usearch::index_dense_t::make( metric );
+    m_index = unum::usearch::index_dense_gt<size_t>::make( metric );
     if( reserve > 0 ) m_index.reserve( reserve );
 }
 
@@ -42,7 +42,7 @@ TracyLlmEmbeddings::TracyLlmEmbeddings( const char* file, uint64_t hash )
     if( !loaded ) throw std::runtime_error( "Failed to read embeddings data from file: " + std::string( file ) );
 
     const auto dbPath = file + std::string( ".db" );
-    unum::usearch::index_dense_t index;
+    unum::usearch::index_dense_gt<size_t> index;
     auto res = index.view( dbPath.c_str() );
     if( !res ) throw std::runtime_error( "Failed to load embeddings database from file: " + std::string( file ) );
     m_index = std::move( index );

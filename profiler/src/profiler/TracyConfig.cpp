@@ -3,7 +3,9 @@
 #include "TracyConfig.hpp"
 #include "TracyStorage.hpp"
 
-#include "../ini.h"
+extern "C" {
+#include "ini.h"
+}
 
 namespace tracy
 {

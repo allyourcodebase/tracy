@@ -5,7 +5,7 @@
 #include "TracyUtility.hpp"
 #include "TracyView.hpp"
 #include "TracyWorker.hpp"
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 
 namespace tracy
 {

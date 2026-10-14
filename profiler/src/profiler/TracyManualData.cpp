@@ -2,7 +2,7 @@
 #include "TracyManualData.hpp"
 
 #define XXH_INLINE_ALL
-#include "tracy_xxhash.h"
+#include "xxhash.h"
 
 #include "data/Manual.hpp"
 

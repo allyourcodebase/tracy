@@ -3,6 +3,7 @@
 #endif
 
 #include <chrono>
+#include <filesystem>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,16 +14,10 @@
 #include "../../server/TracyFileWrite.hpp"
 #include "../../server/TracyPrint.hpp"
 #include "../../server/TracyWorker.hpp"
-#include "../../getopt/getopt.h"
+#include "getopt.h"
 #include "GitRef.hpp"
 
 #include "OfflineSymbolResolver.h"
-
-#ifdef __APPLE__
-#  define ftello64(x) ftello(x)
-#elif defined _WIN32
-#  define ftello64(x) _ftelli64(x)
-#endif
 
 void Usage()
 {
@@ -223,15 +218,8 @@ int main( int argc, char** argv )
             tSave = std::chrono::duration_cast<std::chrono::nanoseconds>( t2 - t1 ).count();
         }
 
-        FILE* in = fopen( input, "rb" );
-        fseek( in, 0, SEEK_END );
-        const auto inSize = ftello64( in );
-        fclose( in );
-
-        FILE* out = fopen( output, "rb" );
-        fseek( out, 0, SEEK_END );
-        const auto outSize = ftello64( out );
-        fclose( out );
+        const auto inSize = std::filesystem::file_size(input);
+        const auto outSize = std::filesystem::file_size(output);
 
         printf( "%s (%i.%i.%i) {%s} -> %s (%i.%i.%i) {%s, %.2f%%}  %s load, %s save, %.2f%% change\n",
             input, inVer >> 16, ( inVer >> 8 ) & 0xFF, inVer & 0xFF, tracy::MemSizeToString( inSize ),

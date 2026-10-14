@@ -12,7 +12,9 @@
 #  include <unistd.h>
 #endif
 
-#include "../ini.h"
+extern "C" {
+#include "ini.h"
+}
 
 #include "TracyStorage.hpp"
 #include "TracyUserData.hpp"

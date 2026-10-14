@@ -7,8 +7,9 @@
 
 #include "TracyImGui.hpp"
 #include "../server/TracyTaskDispatch.hpp"
-#include "../server/tracy_robin_hood.h"
 #include "../public/common/TracyForceInline.hpp"
+#include "robin_hood.h"
+using namespace robin_hood;
 
 namespace tracy
 {
