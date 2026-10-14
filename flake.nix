@@ -60,7 +60,7 @@
                 [curl zstd lz4 freetype gtk3 dbus]
                 ++ lib.optionals (stdenv.hostPlatform.isLinux) [libxkbcommon];
               nativeBuildInputs = with pkgs;
-                [zig_0_16 pkg-config makeWrapper]
+                [zig_0_17 pkg-config makeWrapper]
                 ++ lib.optionals (stdenv.hostPlatform.isLinux) [wayland-scanner wayland-protocols];
               dontSetZigDefaultFlags = true;
               zigBuildFlags = [
@@ -82,7 +82,7 @@
             buildInputs = with pkgs;
               [gtk3 dbus]
               ++ lib.optionals (stdenv.hostPlatform.isLinux) [libxkbcommon];
-            nativeBuildInputs = with pkgs; [zig_0_16 pkg-config];
+            nativeBuildInputs = with pkgs; [zig_0_17 pkg-config];
             # shellHook = ''
             #   export XKB_CONFIG_ROOT=${pkgs.xkeyboard_config}/etc/X11/xkb
             #   export XLOCALEDIR=${pkgs.xorg.libX11.out}/share/X11/locale

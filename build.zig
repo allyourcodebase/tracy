@@ -595,7 +595,7 @@ pub fn build(b: *std.Build) !void {
 
     const run_cmd = b.addRunArtifact(tracy_profiler);
     run_cmd.step.dependOn(&install_profiler.step);
-    if (b.args) |args| run_cmd.addArgs(args);
+    run_cmd.addPassthruArgs();
 
     const run_step = b.step("run", "Run Tracy Profiler");
     run_step.dependOn(&run_cmd.step);
@@ -886,11 +886,8 @@ fn addRunnableExe(
     b.getInstallStep().dependOn(&install_exe.step);
 
     const run = b.addRunArtifact(exe);
+    run.addPassthruArgs();
     run.step.dependOn(&install_exe.step);
-
-    if (b.args) |args| {
-        run.addArgs(args);
-    }
 
     const run_step = b.step(name, "");
     run_step.dependOn(&run.step);
@@ -996,7 +993,7 @@ fn createImgui(
     imgui.root_module.addCSourceFile(.{ .file = upstream.path("backends/imgui_impl_opengl3.cpp") });
     imgui.installHeadersDirectory(upstream.path("backends"), "imgui", .{});
     imgui.root_module.addCMacro("GLFW_INCLUDE_NONE", "1");
-    if (imgui.root_module.optimize != .Debug) {
+    if (imgui.root_module.optimize != .debug) {
         imgui.root_module.addCMacro("IMGUI_DISABLE_DEBUG_TOOLS", "1");
         imgui.root_module.addCMacro("IMGUI_DISABLE_DEMO_WINDOWS", "1");
     }

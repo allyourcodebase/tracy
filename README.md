@@ -6,7 +6,7 @@ This is [Tracy](https://github.com/wolfpld/tracy), packaged for [Zig](https://zi
 
 ## Installation
 
-Install Zig 0.16.0 and then run the following command:
+Install Zig 0.17.0 and then run the following command:
 
 ```bash
 zig build install-profiler

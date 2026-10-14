@@ -2,11 +2,11 @@
     .name = .tracy,
     .version = "0.14.1",
     .fingerprint = 0x255a89eecd27f4ce, // Changing this has security and trust implications.
-    .minimum_zig_version = "0.16.0",
+    .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .glfw = .{ // glfw ported to the zig build system
-            .url = "git+https://github.com/Techatrix/glfw.git#17493bf1da7b77c7554b577917ce2a2febf265a2",
-            .hash = "glfw-3.4.0-yvF4PGJSLwB4PwLFVcTxcixsw57WFurDn9CON4cIbf-H",
+            .url = "git+https://github.com/techatrix/glfw.git#b4a194d4b508bcb5bf9db293c29dcbe430303a6a",
+            .hash = "glfw-3.4.0-yvF4PI5SLwB1dVUMbZYXS2idjNeS8NI9F3q1ja4Mfzxd",
             .lazy = true,
         },
         .capstone = .{ // Availability for capstone as Zig dependency
@@ -15,8 +15,8 @@
             .lazy = true,
         },
         .curl = .{ // curl ported to the zig build system
-            .url = "git+https://github.com/allyourcodebase/curl.git#c59c65cd767951abfe9ac0b1e075e64733953361",
-            .hash = "curl-8.18.0-mFDAWPf7AACO9V1eofR62eABcrB1QQtT1a-DN5XumC53",
+            .url = "git+https://github.com/allyourcodebase/curl.git#5184bb9ff29cb0878be7983734c6852602570ea5",
+            .hash = "curl-8.18.0-mFDAWJ34AADFSd4AEhTLroKwtVlgX9N-T9lU_2qW-VAf",
             .lazy = true,
         },
         .zstd = .{ // zstd ported to the zig build system
@@ -41,8 +41,8 @@
             .lazy = true,
         },
         .wayland = .{
-            .url = "git+https://github.com/allyourcodebase/wayland.git#eb8e7309abf20149f6bb1f5854e754da3f5e09c2",
-            .hash = "wayland-1.26.0-dxEBa5-HAADfF-7jd2Mr595CnAEDteEM2YfMrkV0HVHb",
+            .url = "git+https://github.com/allyourcodebase/wayland.git?ref=1.26.0#f60c569a92500053b99199912467eaa782990cd2",
+            .hash = "wayland-1.26.0-dxEBa8uIAADCPVu8GLlRRaUoU0AK7r5hlZ_XJQ0He41q",
             .lazy = true,
         },
         .wayland_protocols = .{
@@ -51,8 +51,8 @@
             .lazy = true,
         },
         .libxkbcommon = .{
-            .url = "git+https://github.com/allyourcodebase/libxkbcommon.git?ref=1.13.2#466931e7f89f06ab7a685a336b2f4a69f9b89e25",
-            .hash = "libxkbcommon-1.13.2-93LaF2h7AgBIG6oyBvFuUyyiC8Puj0v5OGLE4a5r5ZWl",
+            .url = "git+https://github.com/allyourcodebase/libxkbcommon.git#972f7defd34338080967ddeef7057ecdecb3a3d3",
+            .hash = "libxkbcommon-1.13.2-93LaF0Z9AgAfJd--GjmOzV_5lafHJm_B6mbMC7f7FSls",
             .lazy = true,
         },
 
