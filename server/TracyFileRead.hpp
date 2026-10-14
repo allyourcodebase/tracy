@@ -1,6 +1,13 @@
 #ifndef __TRACYFILEREAD_HPP__
 #define __TRACYFILEREAD_HPP__
 
+#ifdef _WIN32
+  #define STAT64 _stat64
+#else
+  #define _FILE_OFFSET_BITS 64
+  #define STAT64 stat
+#endif
+
 #include <assert.h>
 #include <atomic>
 #include <algorithm>
@@ -15,18 +22,10 @@
 #include <vector>
 #include <zstd.h>
 
-#ifdef _MSC_VER
-#  define stat64 _stat64
-#endif
-#if defined __APPLE__ || defined __FreeBSD__ || (defined __linux__ && !defined __GLIBC__)
-#  define stat64 stat
-#endif
-
 #include "TracyFileHeader.hpp"
 #include "TracyFileMeta.hpp"
 #include "TracyMmap.hpp"
 #include "../public/common/TracyYield.hpp"
-#include "../public/common/tracy_lz4.hpp"
 #include "../public/common/TracyForceInline.hpp"
 
 namespace tracy
@@ -458,8 +457,8 @@ private:
             throw NotTracyDump();
         }
 
-        struct stat64 buf;
-        if( stat64( fn, &buf ) == 0 )
+        struct STAT64 buf;
+        if( STAT64( fn, &buf ) == 0 )
         {
             m_dataSize = buf.st_size;
         }

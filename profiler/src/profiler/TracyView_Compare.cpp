@@ -1,14 +1,14 @@
 #include <numeric>
 #include <sstream>
 
-#include "../dtl/dtl.hpp"
+#include "dtl/dtl.hpp"
 
 #include "TracyImGui.hpp"
 #include "TracyFileRead.hpp"
 #include "TracyFileselector.hpp"
 #include "TracyPrint.hpp"
 #include "TracyView.hpp"
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 #include "../Fonts.hpp"
 
 namespace tracy

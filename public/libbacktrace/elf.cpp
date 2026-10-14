@@ -7428,15 +7428,15 @@ struct phdr_data
 struct PhdrIterate
 {
   char* dlpi_name;
-  ElfW(Addr) dlpi_addr;
-  ElfW(Addr) dlpi_end_addr;
+  b_elf_addr dlpi_addr;
+  b_elf_addr dlpi_end_addr;
 };
 FastVector<PhdrIterate> s_phdrData(16);
 
 struct ElfAddrRange
 {
-  ElfW(Addr) dlpi_addr;
-  ElfW(Addr) dlpi_end_addr;
+  b_elf_addr dlpi_addr;
+  b_elf_addr dlpi_end_addr;
 };
 FastVector<ElfAddrRange> s_sortedKnownElfRanges(16);
 
@@ -7472,14 +7472,14 @@ phdr_callback_mock (struct dl_phdr_info *info, size_t size ATTRIBUTE_UNUSED,
 
   // calculate the end address as well, so we can quickly determine if a PC is within the range of this image
   // headers aren't guaranteed to be in address order; find the max
-  ptr->dlpi_end_addr = ElfW(Addr)(info->dlpi_addr);
+  ptr->dlpi_end_addr = b_elf_addr(info->dlpi_addr);
   for (uint32_t i = 0; i < info->dlpi_phnum; i++)
     {
       const auto &phdr = info->dlpi_phdr[i];
       if (phdr.p_type != PT_LOAD)
         continue;
 
-      const auto phdr_end = ElfW(Addr)(info->dlpi_addr + phdr.p_vaddr + phdr.p_memsz);
+      const auto phdr_end = b_elf_addr(info->dlpi_addr + phdr.p_vaddr + phdr.p_memsz);
       ptr->dlpi_end_addr = std::max(phdr_end, ptr->dlpi_end_addr);
     }
 

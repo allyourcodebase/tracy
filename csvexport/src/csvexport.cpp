@@ -15,7 +15,7 @@
 
 #include "../../server/TracyFileRead.hpp"
 #include "../../server/TracyWorker.hpp"
-#include "../../getopt/getopt.h"
+#include "getopt.h"
 #include "../../public/common/TracyVersion.hpp"
 #include "GitRef.hpp"
 

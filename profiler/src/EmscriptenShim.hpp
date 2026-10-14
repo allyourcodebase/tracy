@@ -1,7 +1,9 @@
 #ifndef __EMSCRIPTENSHIM_HPP__
 #define __EMSCRIPTENSHIM_HPP__
 
-#if defined __EMSCRIPTEN__ || defined __APPLE__
+#include <version>
+
+#ifndef __cpp_lib_atomic_shared_ptr
 
 namespace std {
 

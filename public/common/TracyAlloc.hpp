@@ -11,7 +11,7 @@
 #  include "TracyApi.h"
 #  include "TracyForceInline.hpp"
 #  if !defined TRACY_HAS_CUSTOM_ALLOCATOR
-#    include "../client/tracy_rpmalloc.hpp"
+#    include "rpmalloc/rpmalloc.h"
 #    define TRACY_USE_RPMALLOC
 #  endif
 #endif

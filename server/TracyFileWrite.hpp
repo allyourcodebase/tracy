@@ -15,11 +15,11 @@
 #include <utility>
 #include <vector>
 #include <zstd.h>
+#include <lz4.h>
+#include <lz4hc.h>
 
 #include "TracyFileHeader.hpp"
 #include "TracyFileMeta.hpp"
-#include "../public/common/tracy_lz4.hpp"
-#include "../public/common/tracy_lz4hc.hpp"
 #include "../public/common/TracyForceInline.hpp"
 
 namespace tracy

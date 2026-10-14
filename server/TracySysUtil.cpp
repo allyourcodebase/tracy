@@ -30,10 +30,21 @@ size_t GetPhysicalMemorySize()
     size_t sz = sizeof( memSize );
     sysctlbyname( "hw.memsize", &memSize, &sz, nullptr, 0 );
     return memSize;
-#elif defined __FreeBSD__ || defined __NetBSD__ || defined __OpenBSD__ || defined __DragonFly__
+#elif defined __FreeBSD__ || defined __DragonFly__
     size_t memSize;
     size_t sz = sizeof( memSize );
     sysctlbyname( "hw.physmem", &memSize, &sz, nullptr, 0 );
+    return memSize;
+#elif defined __NetBSD__
+    int64_t memSize;
+    size_t sz = sizeof( memSize );
+    sysctlbyname( "hw.physmem64", &memSize, &sz, nullptr, 0 );
+    return memSize;
+#elif defined __OpenBSD__
+    int64_t memSize;
+    int mib[2] = { CTL_HW, HW_PHYSMEM64 };
+    size_t sz = sizeof(memSize);
+    sysctl(mib, 2, &memSize, &sz, NULL, 0);
     return memSize;
 #else
     return 0;

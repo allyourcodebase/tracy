@@ -5,8 +5,9 @@
 #include <stdint.h>
 
 #include "../public/common/TracyForceInline.hpp"
-#include "tracy_robin_hood.h"
 #include "TracyVector.hpp"
+#include "robin_hood.h"
+using namespace robin_hood;
 
 namespace tracy
 {

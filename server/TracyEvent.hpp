@@ -11,9 +11,10 @@
 #include "TracyShortPtr.hpp"
 #include "TracySortedVector.hpp"
 #include "TracyVector.hpp"
-#include "tracy_robin_hood.h"
 #include "../public/common/TracyForceInline.hpp"
 #include "../public/common/TracyQueue.hpp"
+#include "robin_hood.h"
+using namespace robin_hood;
 
 namespace tracy
 {

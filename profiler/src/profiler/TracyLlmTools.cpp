@@ -22,7 +22,7 @@
 #include "TracyUtility.hpp"
 #include "TracyView.hpp"
 #include "TracyWorker.hpp"
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 
 constexpr const char* NoNetworkAccess = "Internet access is disabled by the user. Inform the user that they may enable it in the settings, so that you can use the tools to gather information.";
 

@@ -8,7 +8,7 @@
 #include "TracyPrint.hpp"
 #include "TracyVector.hpp"
 #include "TracyView.hpp"
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 #include "../Fonts.hpp"
 
 namespace tracy

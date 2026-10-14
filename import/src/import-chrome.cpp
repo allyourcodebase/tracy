@@ -2,6 +2,13 @@
 #  include <windows.h>
 #endif
 
+#ifdef _WIN32
+  #define STAT64 _stat64
+#else
+  #define _FILE_OFFSET_BITS 64
+  #define STAT64 stat
+#endif
+
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <stdint.h>
@@ -11,13 +18,6 @@
 #include <sys/stat.h>
 #include <unordered_map>
 #include <zstd.h>
-
-#ifdef _MSC_VER
-#  define stat64 _stat64
-#endif
-#if defined __APPLE__
-#  define stat64 stat
-#endif
 
 #include "../../server/TracyFileWrite.hpp"
 #include "../../server/TracyMmap.hpp"
@@ -72,8 +72,8 @@ int main( int argc, char** argv )
             fprintf( stderr, "Cannot open input file!\n" );
             exit( 1 );
         }
-        struct stat64 sb;
-        if( stat64( input, &sb ) != 0 )
+        struct STAT64 sb;
+        if( STAT64( input, &sb ) != 0 )
         {
             fprintf( stderr, "Cannot open input file!\n" );
             fclose( f );

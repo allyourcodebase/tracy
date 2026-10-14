@@ -4,6 +4,18 @@
 #  include <intrin.h>
 #  include <stdint.h>
 
+#if defined(__x86_64__) || defined(__i386__)
+static inline void CpuId( uint32_t* regs, uint32_t leaf )
+{
+    memset(regs, 0, sizeof(uint32_t) * 4);
+#if defined _MSC_VER
+    __cpuidex( (int*)regs, leaf, 0 );
+#else
+    __get_cpuid( leaf, regs, regs+1, regs+2, regs+3 );
+#endif
+}
+#endif
+
 namespace tracy
 {
 bool DiscoveryAVX();
@@ -17,18 +29,18 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd,
 #if defined(_M_IX86) || defined(_M_X64)
     {
         uint32_t regs[4];
-        __cpuidex( (int*)regs, 0, 0 );
+        CpuId( regs, 0 );
         const uint32_t maxLeaf = regs[0];
         bool cpuHasAVX = false;
         bool cpuHasAVX2 = false;
         if( maxLeaf >= 1 )
         {
-            __cpuidex( (int*)regs, 1, 0 );
+            CpuId( regs, 1 );
             cpuHasAVX = ( regs[2] & 0x10000000 ) != 0;
         }
         if( maxLeaf >= 7 )
         {
-            __cpuidex( (int*)regs, 7, 0 );
+            CpuId( regs, 7 );
             cpuHasAVX2 = ( regs[1] & 0x00000020 ) != 0;
         }
 

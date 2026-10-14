@@ -1,5 +1,4 @@
 #include "../common/TracyAssert.hpp"
-#include "../server/tracy_robin_hood.h"
 #include "TracyProfiler.hpp"
 #include "TracyThread.hpp"
 #include "tracy/TracyC.h"
@@ -14,6 +13,9 @@
 #include <time.h>
 #include <unordered_map>
 #include <vector>
+
+#include "robin_hood.h"
+using namespace robin_hood;
 
 #define ROCPROFILER_CALL( result, msg )                                                                                \
     {                                                                                                                  \

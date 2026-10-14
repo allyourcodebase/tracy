@@ -14,7 +14,7 @@
 #include "../Fonts.hpp"
 
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 void* memmem( const void* haystack, size_t hsize, const char* needle, size_t nsize )
 {
     auto left = ptrdiff_t( hsize ) - ptrdiff_t( nsize );

@@ -65,6 +65,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <thread>
+#include <lz4.h>
 
 #include "../common/TracyAlign.hpp"
 #include "../common/TracyAlloc.hpp"
@@ -72,7 +73,7 @@
 #include "../common/TracySocket.hpp"
 #include "../common/TracySystem.hpp"
 #include "../common/TracyYield.hpp"
-#include "../common/tracy_lz4.hpp"
+#include "rpmalloc/rpmalloc.h"
 #include "TracyCallstack.hpp"
 #include "TracyDebug.hpp"
 #include "TracyDxt1.hpp"
@@ -721,11 +722,22 @@ static const char* GetHostInfo()
     size_t sz = sizeof( memSize );
     sysctlbyname( "hw.memsize", &memSize, &sz, nullptr, 0 );
     ptr += sprintf( ptr, "RAM: %zu MB\n", memSize / 1024 / 1024 );
-#elif defined __FreeBSD__ || defined __NetBSD__ || defined __OpenBSD__ || defined __DragonFly__
+#elif defined __FreeBSD__ || defined __DragonFly__
     size_t memSize;
     size_t sz = sizeof( memSize );
     sysctlbyname( "hw.physmem", &memSize, &sz, nullptr, 0 );
     ptr += sprintf( ptr, "RAM: %zu MB\n", memSize / 1024 / 1024 );
+#elif defined __NetBSD__
+    int64_t memSize;
+    size_t sz = sizeof( memSize );
+    sysctlbyname( "hw.physmem64", &memSize, &sz, nullptr, 0 );
+    ptr += sprintf( ptr, "RAM: %zd MB\n", memSize / 1024 / 1024 );
+#elif defined __OpenBSD__
+    int64_t memSize;
+    int mib[2] = { CTL_HW, HW_PHYSMEM64 };
+    size_t sz = sizeof(memSize);
+    sysctl(mib, 2, &memSize, &sz, NULL, 0);
+    ptr += sprintf( ptr, "RAM: %" PRId64 " MB\n", memSize / 1024 / 1024 );
 #elif defined __QNX__
     struct asinfo_entry *entries = SYSPAGE_ENTRY(asinfo);
     size_t count = SYSPAGE_ENTRY_SIZE(asinfo) / sizeof(struct asinfo_entry);

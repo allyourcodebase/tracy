@@ -1,9 +1,9 @@
-#include <capstone.h>
+#include <capstone/capstone.h>
 #include <string.h>
 
 #include "TracyDisassembly.hpp"
 #include "TracyView.hpp"
-#include "tracy_pdqsort.h"
+#include "pdqsort.h"
 #include "../server/TracyWorker.hpp"
 
 namespace tracy
